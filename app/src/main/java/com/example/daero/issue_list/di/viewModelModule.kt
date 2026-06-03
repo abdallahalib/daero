@@ -16,6 +16,6 @@ val viewModelModule = module {
         IssueListViewModel(get())
     }
     viewModel {
-        NewIssueViewModel()
+        NewIssueViewModel(get())
     }
 }

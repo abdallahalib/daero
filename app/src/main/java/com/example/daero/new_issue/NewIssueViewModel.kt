@@ -2,10 +2,10 @@ package com.example.daero.new_issue
 
 import androidx.camera.core.ImageCapture
 import androidx.camera.core.ImageCaptureException
-import androidx.camera.core.ImageProxy
 import androidx.camera.core.Preview
 import androidx.camera.core.SurfaceRequest
 import androidx.lifecycle.ViewModel
+import com.example.daero.core.storage.AppStorage
 import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
@@ -17,6 +17,7 @@ import java.util.concurrent.Executors
 data class NewIssueUiState(
     val surfaceRequest: SurfaceRequest? = null,
     val isLoading: Boolean = false,
+    val capturedImage: String? = null,
 )
 
 sealed class NewIssueIntent {
@@ -28,7 +29,9 @@ sealed class NewIssueEffect {
     object NavigateBack : NewIssueEffect()
 }
 
-class NewIssueViewModel : ViewModel() {
+class NewIssueViewModel(
+    private val appStorage: AppStorage,
+) : ViewModel() {
     private val _uiState = MutableStateFlow(NewIssueUiState())
     val uiState: StateFlow<NewIssueUiState> = _uiState
 
@@ -68,14 +71,21 @@ class NewIssueViewModel : ViewModel() {
         _uiState.update {
             it.copy(isLoading = true)
         }
+
+        val outputFile = appStorage.createImageFile()
+        val outputOptions = ImageCapture.OutputFileOptions.Builder(outputFile).build()
+
         imageCapture.takePicture(
+            outputOptions,
             cameraExecutor,
-            object : ImageCapture.OnImageCapturedCallback() {
-                override fun onCaptureSuccess(image: ImageProxy) {
+            object : ImageCapture.OnImageSavedCallback {
+                override fun onImageSaved(outputFileResults: ImageCapture.OutputFileResults) {
                     _uiState.update {
-                        it.copy(isLoading = false)
+                        it.copy(
+                            isLoading = false,
+                            capturedImage = outputFile.absolutePath
+                        )
                     }
-                    image.close()
                 }
 
                 override fun onError(exception: ImageCaptureException) {
