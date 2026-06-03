@@ -7,9 +7,12 @@ import androidx.camera.core.SurfaceRequest
 import androidx.camera.lifecycle.ProcessCameraProvider
 import androidx.camera.lifecycle.awaitInstance
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
 import androidx.lifecycle.compose.LocalLifecycleOwner
 import kotlinx.coroutines.awaitCancellation
@@ -36,7 +39,9 @@ fun CameraPreview(
     surfaceRequest?.let { request: SurfaceRequest ->
         CameraXViewfinder(
             surfaceRequest = request,
-            modifier = modifier.fillMaxSize()
+            modifier = modifier.fillMaxSize(),
+            contentScale = ContentScale.Fit,
+            alignment = Alignment.TopCenter
         )
     }
 }
