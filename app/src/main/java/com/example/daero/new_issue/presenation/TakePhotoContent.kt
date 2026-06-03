@@ -24,18 +24,19 @@ fun TakePhotoContent(
     imageCapture: ImageCapture,
     onCaptureClicked: () -> Unit,
     capturedImage: String?,
+    isCapturing: Boolean,
 ) {
     Box(
         modifier = modifier.fillMaxSize(),
     ) {
-        if (capturedImage == null) {
-            CameraPreview(
-                modifier = Modifier.align(Alignment.Center),
-                preview = preview,
-                surfaceRequest = surfaceRequest,
-                imageCapture = imageCapture,
-            )
-        } else {
+        CameraPreview(
+            modifier = Modifier.align(Alignment.Center),
+            preview = preview,
+            surfaceRequest = surfaceRequest,
+            imageCapture = imageCapture,
+            isCapturing = isCapturing,
+        )
+        if (capturedImage != null) {
             AsyncImage(
                 model = capturedImage,
                 contentDescription = null,
