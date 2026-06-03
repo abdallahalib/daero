@@ -32,6 +32,7 @@ fun TakePhotoContent(
     capturedImage: String?,
     isCapturing: Boolean,
     onRetakeClicked: () -> Unit,
+    onConfirmClicked: () -> Unit,
 ) {
     Box(
         modifier = modifier.fillMaxSize(),
@@ -74,7 +75,7 @@ fun TakePhotoContent(
                 }
                 if (capturedImage != null) {
                     IconButton(
-                        onClick = { TODO("Not implemented") }
+                        onClick = onConfirmClicked,
                     ) {
                         Icon(
                             imageVector = ImageVector.vectorResource(id = com.example.daero.R.drawable.check_24px),
