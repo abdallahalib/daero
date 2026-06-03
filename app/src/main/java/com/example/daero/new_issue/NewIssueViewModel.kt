@@ -6,12 +6,21 @@ import androidx.camera.core.ImageCaptureException
 import androidx.camera.core.Preview
 import androidx.camera.core.SurfaceRequest
 import androidx.lifecycle.ViewModel
+import androidx.lifecycle.viewModelScope
 import com.example.daero.core.storage.AppStorage
+import com.example.daero.issue_list.domain.model.Issue
+import com.example.daero.issue_list.domain.model.IssuePriority
+import com.example.daero.issue_list.domain.model.IssueStatus
+import com.example.daero.issue_list.domain.model.IssueSyncStatus
+import com.example.daero.issue_list.domain.model.Result
+import com.example.daero.issue_list.domain.repository.IssueListRepository
 import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.receiveAsFlow
 import kotlinx.coroutines.flow.update
+import kotlinx.coroutines.launch
+import java.util.UUID
 import java.util.concurrent.ExecutorService
 import java.util.concurrent.Executors
 
@@ -27,6 +36,8 @@ sealed class NewIssueIntent {
     object OnCapturePhotoClicked : NewIssueIntent()
 
     object OnRetakeClicked : NewIssueIntent()
+
+    object OnSubmitClicked : NewIssueIntent()
 }
 
 sealed class NewIssueEffect {
@@ -35,6 +46,7 @@ sealed class NewIssueEffect {
 
 class NewIssueViewModel(
     private val appStorage: AppStorage,
+    private val issueListRepository: IssueListRepository,
 ) : ViewModel() {
     private val _uiState = MutableStateFlow(NewIssueUiState())
     val uiState: StateFlow<NewIssueUiState> = _uiState
@@ -60,15 +72,21 @@ class NewIssueViewModel(
             is NewIssueIntent.OnBackClicked -> {
                 _effect.trySend(NewIssueEffect.NavigateBack)
             }
+
             is NewIssueIntent.OnCapturePhotoClicked -> {
                 takePhoto()
             }
+
             is NewIssueIntent.OnRetakeClicked -> {
                 _uiState.update {
                     it.copy(
                         capturedImage = null
                     )
                 }
+            }
+
+            NewIssueIntent.OnSubmitClicked -> {
+                submitPhoto()
             }
         }
     }
@@ -108,5 +126,43 @@ class NewIssueViewModel(
                 }
             }
         )
+    }
+
+    private fun submitPhoto() {
+        _uiState.update {
+            it.copy(
+                isLoading = true
+            )
+        }
+        viewModelScope.launch {
+            val result = issueListRepository.insertIssue(
+                Issue(
+                    id = UUID.randomUUID().toString(),
+                    title = "New Issue",
+                    notes = "Description of the new issue",
+                    location = "Unknown Location",
+                    priority = IssuePriority.MEDIUM,
+                    status = IssueStatus.OPEN,
+                    syncStatus = IssueSyncStatus.PENDING,
+                    photoPath = _uiState.value.capturedImage ?: return@launch,
+                    createdAt = System.currentTimeMillis(),
+                    updatedAt = System.currentTimeMillis(),
+                )
+            )
+            if (result is Result.Success) {
+                _effect.trySend(NewIssueEffect.NavigateBack)
+                _uiState.update {
+                    it.copy(
+                        capturedImage = null
+                    )
+                }
+            } else {
+                _uiState.update {
+                    it.copy(
+                        isLoading = false
+                    )
+                }
+            }
+        }
     }
 }
