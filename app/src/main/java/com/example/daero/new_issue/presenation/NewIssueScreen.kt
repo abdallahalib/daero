@@ -57,6 +57,7 @@ fun NewIssueScreen(
             capturedImage = newIssueUiState.capturedImage,
             isCapturing = newIssueUiState.isCapturing,
             onRetakeClicked = { onIntent(NewIssueIntent.OnRetakeClicked) },
+            onConfirmClicked = { onIntent(NewIssueIntent.OnSubmitClicked) },
         )
         if (newIssueUiState.isLoading) {
             Box(
