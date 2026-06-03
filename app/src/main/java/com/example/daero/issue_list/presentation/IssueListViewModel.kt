@@ -6,9 +6,11 @@ import com.example.daero.issue_list.domain.model.Result
 import com.example.daero.issue_list.domain.repository.IssueListRepository
 import com.example.daero.issue_list.presentation.model.IssueUi
 import com.example.daero.issue_list.presentation.model.toUi
+import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.combine
+import kotlinx.coroutines.flow.receiveAsFlow
 import kotlinx.coroutines.flow.stateIn
 
 
@@ -21,6 +23,8 @@ sealed class IssueListIntent {
     data object OnAddIssueClicked : IssueListIntent()
 }
 
+sealed class IssueListEffect {
+}
 class IssueListViewModel(
     private val repository: IssueListRepository
 ): ViewModel() {
@@ -50,6 +54,8 @@ class IssueListViewModel(
         IssueListUiState(isLoading = true)
     )
 
+    private val _effect = Channel<IssueListEffect>(Channel.BUFFERED)
+    val effect = _effect.receiveAsFlow()
     fun handleIntent(intent: IssueListIntent) {
         when (intent) {
             is IssueListIntent.OnAddIssueClicked -> {
