@@ -27,6 +27,7 @@ import com.example.daero.issue_list.presentation.model.IssueUi
 @Composable
 fun IssueListScreen(
     issueListUiState: IssueListUiState,
+    onIntent: (IssueListIntent) -> Unit,
 ) {
     Scaffold(
         topBar = {
@@ -48,7 +49,9 @@ fun IssueListScreen(
         },
         floatingActionButton = {
             FloatingActionButton(
-                onClick = { TODO("Not implemented") }
+                onClick = {
+                    onIntent(IssueListIntent.OnAddIssueClicked)
+                }
             ) {
                 Icon(
                     imageVector = ImageVector.vectorResource(R.drawable.photo_camera_24px),
@@ -64,7 +67,9 @@ fun IssueListScreen(
         )
         if (issueListUiState.isLoading) {
             Box(
-                modifier = Modifier.padding(paddingValues).fillMaxSize(),
+                modifier = Modifier
+                    .padding(paddingValues)
+                    .fillMaxSize(),
                 contentAlignment = Alignment.Center
             ) {
                 CircularProgressIndicator()
@@ -105,5 +110,8 @@ fun IssueListScreenPreview() {
             )
         )
     )
-    IssueListScreen(issueListUiState = issueListUiState)
+    IssueListScreen(
+        issueListUiState = issueListUiState,
+        onIntent = { }
+    )
 }

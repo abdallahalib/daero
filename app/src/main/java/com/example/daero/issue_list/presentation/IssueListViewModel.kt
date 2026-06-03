@@ -17,6 +17,10 @@ data class IssueListUiState(
     val isLoading: Boolean = false,
 )
 
+sealed class IssueListIntent {
+    data object OnAddIssueClicked : IssueListIntent()
+}
+
 class IssueListViewModel(
     private val repository: IssueListRepository
 ): ViewModel() {
@@ -45,4 +49,12 @@ class IssueListViewModel(
         SharingStarted.WhileSubscribed(5000),
         IssueListUiState(isLoading = true)
     )
+
+    fun handleIntent(intent: IssueListIntent) {
+        when (intent) {
+            is IssueListIntent.OnAddIssueClicked -> {
+                TODO("Not implemented")
+            }
+        }
+    }
 }

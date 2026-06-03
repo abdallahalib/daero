@@ -19,7 +19,10 @@ class MainActivity : ComponentActivity() {
         setContent {
             val issueListUiState = issueListViewModel.uiState.collectAsStateWithLifecycle().value
             DaeroTheme(darkTheme = true) {
-                IssueListScreen(issueListUiState = issueListUiState)
+                IssueListScreen(
+                    issueListUiState = issueListUiState,
+                    onIntent = issueListViewModel::handleIntent
+                )
             }
         }
     }
