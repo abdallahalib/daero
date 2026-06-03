@@ -38,7 +38,7 @@ class NewIssueViewModel : ViewModel() {
     fun handleIntent(intent: NewIssueIntent) {
         when (intent) {
             is NewIssueIntent.OnBackClicked -> {
-                TODO("Not implemented")
+                _effect.trySend(NewIssueEffect.NavigateBack)
             }
         }
     }

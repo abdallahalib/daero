@@ -75,7 +75,10 @@ class MainActivity : ComponentActivity() {
                     composable("new_issue") {
                         NewIssueScreen(
                             preview = newIssueViewModel.preview,
-                            newIssueUiState = newIssueUiState
+                            newIssueUiState = newIssueUiState,
+                            onIntent = { intent ->
+                                newIssueViewModel.handleIntent(intent)
+                            }
                         )
                     }
                 }
