@@ -18,7 +18,3 @@ val databaseModule = module {
 
     single { get<AppDatabase>().issueDao() }
 }
-
-val repositoryModule = module {
-    single<IssueListRepository> { IssueListRepositoryImpl(get()) }
-}
