@@ -1,5 +1,6 @@
 package com.example.daero.new_issue.presenation
 
+import androidx.camera.core.ImageCapture
 import androidx.camera.core.Preview
 import androidx.camera.core.SurfaceRequest
 import androidx.compose.foundation.layout.Box
@@ -16,6 +17,8 @@ fun TakePhotoContent(
     modifier: Modifier = Modifier,
     preview: Preview,
     surfaceRequest: SurfaceRequest?,
+    imageCapture: ImageCapture,
+    onCaptureClicked: () -> Unit,
 ) {
     Box(
         modifier = modifier
@@ -24,14 +27,13 @@ fun TakePhotoContent(
             modifier = Modifier.align(Alignment.Center),
             preview = preview,
             surfaceRequest = surfaceRequest,
+            imageCapture = imageCapture,
         )
         Column(
             modifier = Modifier.align(Alignment.BottomCenter).padding(bottom = 16.dp)
         ) {
             CaptureButton(
-                onClick = {
-                    TODO("Not implemented")
-                }
+                onClick = onCaptureClicked
             )
         }
     }
