@@ -25,6 +25,8 @@ data class NewIssueUiState(
 sealed class NewIssueIntent {
     object OnBackClicked : NewIssueIntent()
     object OnCapturePhotoClicked : NewIssueIntent()
+
+    object OnRetakeClicked : NewIssueIntent()
 }
 
 sealed class NewIssueEffect {
@@ -60,6 +62,13 @@ class NewIssueViewModel(
             }
             is NewIssueIntent.OnCapturePhotoClicked -> {
                 takePhoto()
+            }
+            is NewIssueIntent.OnRetakeClicked -> {
+                _uiState.update {
+                    it.copy(
+                        capturedImage = null
+                    )
+                }
             }
         }
     }
