@@ -15,7 +15,8 @@ import java.util.concurrent.ExecutorService
 import java.util.concurrent.Executors
 
 data class NewIssueUiState(
-    val surfaceRequest: SurfaceRequest? = null
+    val surfaceRequest: SurfaceRequest? = null,
+    val isLoading: Boolean = false,
 )
 
 sealed class NewIssueIntent {
@@ -64,15 +65,23 @@ class NewIssueViewModel : ViewModel() {
     }
 
     private fun takePhoto() {
+        _uiState.update {
+            it.copy(isLoading = true)
+        }
         imageCapture.takePicture(
             cameraExecutor,
             object : ImageCapture.OnImageCapturedCallback() {
                 override fun onCaptureSuccess(image: ImageProxy) {
+                    _uiState.update {
+                        it.copy(isLoading = false)
+                    }
                     image.close()
                 }
 
                 override fun onError(exception: ImageCaptureException) {
-
+                    _uiState.update {
+                        it.copy(isLoading = false)
+                    }
                 }
             }
         )
