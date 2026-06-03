@@ -67,4 +67,5 @@ dependencies {
     implementation(libs.androidx.camera.core)
     implementation(libs.androidx.camera.lifecycle)
     implementation(libs.androidx.camera.compose)
+    implementation(libs.androidx.navigation.compose)
 }
