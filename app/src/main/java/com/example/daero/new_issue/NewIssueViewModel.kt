@@ -1,5 +1,8 @@
 package com.example.daero.new_issue
 
+import androidx.camera.core.ImageCapture
+import androidx.camera.core.ImageCaptureException
+import androidx.camera.core.ImageProxy
 import androidx.camera.core.Preview
 import androidx.camera.core.SurfaceRequest
 import androidx.lifecycle.ViewModel
@@ -8,6 +11,8 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.receiveAsFlow
 import kotlinx.coroutines.flow.update
+import java.util.concurrent.ExecutorService
+import java.util.concurrent.Executors
 
 data class NewIssueUiState(
     val surfaceRequest: SurfaceRequest? = null
@@ -15,6 +20,7 @@ data class NewIssueUiState(
 
 sealed class NewIssueIntent {
     object OnBackClicked : NewIssueIntent()
+    object OnCapturePhotoClicked : NewIssueIntent()
 }
 
 sealed class NewIssueEffect {
@@ -28,6 +34,8 @@ class NewIssueViewModel : ViewModel() {
     private val _effect = Channel<NewIssueEffect>(Channel.BUFFERED)
     val effect = _effect.receiveAsFlow()
 
+    private val cameraExecutor: ExecutorService = Executors.newSingleThreadExecutor()
+
     val preview: Preview =
         Preview.Builder().build().apply {
             setSurfaceProvider { request ->
@@ -35,11 +43,38 @@ class NewIssueViewModel : ViewModel() {
             }
         }
 
+    val imageCapture: ImageCapture = ImageCapture.Builder()
+        .setCaptureMode(ImageCapture.CAPTURE_MODE_MINIMIZE_LATENCY)
+        .build()
+
     fun handleIntent(intent: NewIssueIntent) {
         when (intent) {
             is NewIssueIntent.OnBackClicked -> {
                 _effect.trySend(NewIssueEffect.NavigateBack)
             }
+            is NewIssueIntent.OnCapturePhotoClicked -> {
+                takePhoto()
+            }
         }
+    }
+
+    override fun onCleared() {
+        super.onCleared()
+        cameraExecutor.shutdown()
+    }
+
+    private fun takePhoto() {
+        imageCapture.takePicture(
+            cameraExecutor,
+            object : ImageCapture.OnImageCapturedCallback() {
+                override fun onCaptureSuccess(image: ImageProxy) {
+                    image.close()
+                }
+
+                override fun onError(exception: ImageCaptureException) {
+
+                }
+            }
+        )
     }
 }
