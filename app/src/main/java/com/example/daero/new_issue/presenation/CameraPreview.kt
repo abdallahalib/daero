@@ -23,22 +23,40 @@ fun CameraPreview(
     preview: Preview,
     surfaceRequest: SurfaceRequest?,
     imageCapture: ImageCapture,
+    isCapturing: Boolean,
 ) {
     val context = LocalContext.current
     val lifecycleOwner = LocalLifecycleOwner.current
 
+    fun bindCamera(provider: ProcessCameraProvider) {
+        provider.bindToLifecycle(
+            lifecycleOwner,
+            CameraSelector.DEFAULT_BACK_CAMERA,
+            preview,
+            imageCapture,
+        )
+    }
+
     LaunchedEffect(preview, imageCapture, lifecycleOwner) {
         val provider = ProcessCameraProvider.awaitInstance(context)
         try {
-            provider.bindToLifecycle(
-                lifecycleOwner,
-                CameraSelector.DEFAULT_BACK_CAMERA,
-                preview,
-                imageCapture,
-            )
+            bindCamera(provider)
             awaitCancellation()
         } finally {
             provider.unbind(preview, imageCapture)
+        }
+    }
+
+    LaunchedEffect(isCapturing) {
+        val provider = ProcessCameraProvider.awaitInstance(context)
+        if (isCapturing) {
+            provider.unbind(preview)
+        } else {
+            try {
+                bindCamera(provider)
+            } catch (e: Exception) {
+
+            }
         }
     }
 
