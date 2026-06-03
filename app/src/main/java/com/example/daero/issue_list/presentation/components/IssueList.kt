@@ -14,19 +14,20 @@ import com.example.daero.issue_list.presentation.model.IssueUi
 
 @Composable
 fun IssueList(
+    modifier: Modifier = Modifier,
     issues: List<IssueUi>,
     onItemClick: (IssueUi) -> Unit,
 ) {
     if (issues.isEmpty()) {
         Box(
-            modifier = Modifier.fillMaxSize(),
+            modifier = modifier.fillMaxSize(),
             contentAlignment = androidx.compose.ui.Alignment.Center
         ) {
             Text(text = "No field notes yet.")
         }
     } else {
         LazyColumn(
-            modifier = Modifier.fillMaxSize(),
+            modifier = modifier.fillMaxSize(),
             contentPadding = PaddingValues(vertical = 16.dp)
         ) {
             items(issues) {
