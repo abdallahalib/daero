@@ -4,5 +4,14 @@ enum class IssueSyncStatus {
     SYNCED,
     PENDING,
     FAILED,
-    CONFLICT
+    CONFLICT;
+
+    fun toReadableString(): String {
+        return when (this) {
+            SYNCED -> "Synced"
+            PENDING -> "Pending"
+            FAILED -> "Failed"
+            CONFLICT -> "Conflict"
+        }
+    }
 }
