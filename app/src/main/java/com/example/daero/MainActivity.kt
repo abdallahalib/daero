@@ -5,14 +5,19 @@ import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import androidx.navigation.compose.NavHost
+import androidx.navigation.compose.composable
+import androidx.navigation.compose.rememberNavController
 import com.example.daero.issue_list.presentation.IssueListScreen
 import com.example.daero.issue_list.presentation.IssueListViewModel
-import com.example.daero.new_issue.presenation.CameraPreview
+import com.example.daero.new_issue.NewIssueViewModel
+import com.example.daero.new_issue.presenation.NewIssueScreen
 import com.example.daero.ui.theme.DaeroTheme
 import org.koin.androidx.viewmodel.ext.android.viewModel
 
 class MainActivity : ComponentActivity() {
     private val issueListViewModel: IssueListViewModel by viewModel()
+    private val newIssueViewModel: NewIssueViewModel by viewModel()
 
     private val cameraPermissionLauncher = registerForActivityResult(
         androidx.activity.result.contract.ActivityResultContracts.RequestPermission()
@@ -29,11 +34,28 @@ class MainActivity : ComponentActivity() {
         enableEdgeToEdge()
         setContent {
             val issueListUiState = issueListViewModel.uiState.collectAsStateWithLifecycle().value
+            val newIssueUiState = newIssueViewModel.uiState.collectAsStateWithLifecycle().value
+            val navController = rememberNavController()
             DaeroTheme(darkTheme = true) {
-                IssueListScreen(
-                    issueListUiState = issueListUiState,
-                    onIntent = issueListViewModel::handleIntent
-                )
+                NavHost(
+                    navController = navController,
+                    startDestination = "issue_list"
+                ) {
+                    composable("issue_list") {
+                        IssueListScreen(
+                            issueListUiState = issueListUiState,
+                            onIntent = { intent ->
+                                issueListViewModel.handleIntent(intent)
+                            }
+                        )
+                    }
+                    composable("new_issue") {
+                        NewIssueScreen(
+                            preview = newIssueViewModel.preview,
+                            newIssueUiState = newIssueUiState
+                        )
+                    }
+                }
             }
         }
     }
