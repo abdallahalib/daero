@@ -2,6 +2,8 @@ package com.example.daero.issue_list.di
 
 import androidx.room.Room
 import com.example.daero.issue_list.data.local.db.AppDatabase
+import com.example.daero.issue_list.data.repository.IssueListRepositoryImpl
+import com.example.daero.issue_list.domain.repository.IssueListRepository
 import org.koin.android.ext.koin.androidContext
 import org.koin.dsl.module
 
@@ -15,4 +17,8 @@ val databaseModule = module {
     }
 
     single { get<AppDatabase>().issueDao() }
+}
+
+val repositoryModule = module {
+    single<IssueListRepository> { IssueListRepositoryImpl(get()) }
 }

@@ -2,6 +2,7 @@ package com.example.daero
 
 import android.app.Application
 import com.example.daero.issue_list.di.databaseModule
+import com.example.daero.issue_list.di.repositoryModule
 import org.koin.android.ext.koin.androidContext
 import org.koin.core.context.GlobalContext.startKoin
 
@@ -13,6 +14,7 @@ class App : Application() {
             androidContext(this@App)
             modules(
                 databaseModule,
+                repositoryModule,
             )
         }
     }
