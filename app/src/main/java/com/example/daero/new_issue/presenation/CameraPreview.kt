@@ -2,12 +2,12 @@ package com.example.daero.new_issue.presenation
 
 import androidx.camera.compose.CameraXViewfinder
 import androidx.camera.core.CameraSelector
+import androidx.camera.core.ImageCapture
 import androidx.camera.core.Preview
 import androidx.camera.core.SurfaceRequest
 import androidx.camera.lifecycle.ProcessCameraProvider
 import androidx.camera.lifecycle.awaitInstance
 import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.ui.Alignment
@@ -22,17 +22,23 @@ fun CameraPreview(
     modifier: Modifier = Modifier,
     preview: Preview,
     surfaceRequest: SurfaceRequest?,
+    imageCapture: ImageCapture,
 ) {
     val context = LocalContext.current
     val lifecycleOwner = LocalLifecycleOwner.current
 
-    LaunchedEffect(preview, lifecycleOwner) {
+    LaunchedEffect(preview, imageCapture, lifecycleOwner) {
         val provider = ProcessCameraProvider.awaitInstance(context)
         try {
-            provider.bindToLifecycle(lifecycleOwner, CameraSelector.DEFAULT_BACK_CAMERA, preview)
+            provider.bindToLifecycle(
+                lifecycleOwner,
+                CameraSelector.DEFAULT_BACK_CAMERA,
+                preview,
+                imageCapture,
+            )
             awaitCancellation()
         } finally {
-            provider.unbind(preview)
+            provider.unbind(preview, imageCapture)
         }
     }
 
