@@ -3,6 +3,7 @@ package com.example.daero.issue_list.data.local.entity
 import androidx.room.ColumnInfo
 import androidx.room.Entity
 import androidx.room.PrimaryKey
+import com.example.daero.issue_list.domain.model.Issue
 import com.example.daero.issue_list.domain.model.IssuePriority
 import com.example.daero.issue_list.domain.model.IssueStatus
 import com.example.daero.issue_list.domain.model.IssueSyncStatus
@@ -20,3 +21,33 @@ data class IssueEntity(
     @ColumnInfo(name = "updated_at") val updatedAt: Long,
     @ColumnInfo(name = "sync_status") val syncStatus: IssueSyncStatus,
 )
+
+fun IssueEntity.toDomain(): Issue {
+    return Issue(
+        id = id,
+        photoPath = photoPath,
+        title = title,
+        notes = notes,
+        location = location,
+        status = status,
+        priority = priority,
+        createdAt = createdAt,
+        updatedAt = updatedAt,
+        syncStatus = syncStatus
+    )
+}
+
+fun Issue.toEntity(): IssueEntity {
+    return IssueEntity(
+        id = id,
+        photoPath = photoPath,
+        title = title,
+        notes = notes,
+        location = location,
+        status = status,
+        priority = priority,
+        createdAt = createdAt,
+        updatedAt = updatedAt,
+        syncStatus = syncStatus
+    )
+}
