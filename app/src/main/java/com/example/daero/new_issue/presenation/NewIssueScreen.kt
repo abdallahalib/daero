@@ -1,5 +1,6 @@
 package com.example.daero.new_issue.presenation
 
+import androidx.camera.core.ImageCapture
 import androidx.camera.core.Preview
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.ExperimentalMaterial3Api
@@ -20,6 +21,7 @@ import com.example.daero.new_issue.NewIssueUiState
 @Composable
 fun NewIssueScreen(
     preview: Preview,
+    imageCapture: ImageCapture,
     newIssueUiState: NewIssueUiState,
     onIntent: (NewIssueIntent) -> Unit,
 ) {
@@ -46,6 +48,8 @@ fun NewIssueScreen(
             modifier = Modifier.padding(paddingValues),
             preview = preview,
             surfaceRequest = newIssueUiState.surfaceRequest,
+            imageCapture = imageCapture,
+            onCaptureClicked = { onIntent(NewIssueIntent.OnCapturePhotoClicked) },
         )
     }
 }
