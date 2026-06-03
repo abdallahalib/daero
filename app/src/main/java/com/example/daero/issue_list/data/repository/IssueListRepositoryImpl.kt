@@ -1,0 +1,53 @@
+package com.example.daero.issue_list.data.repository
+
+import com.example.daero.issue_list.data.local.dao.IssueDao
+import com.example.daero.issue_list.data.local.entity.IssueEntity
+import com.example.daero.issue_list.data.local.entity.toDomain
+import com.example.daero.issue_list.data.local.entity.toEntity
+import com.example.daero.issue_list.domain.model.Issue
+import com.example.daero.issue_list.domain.model.IssueSyncStatus
+import com.example.daero.issue_list.domain.model.Result
+import com.example.daero.issue_list.domain.repository.IssueListRepository
+import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.catch
+import kotlinx.coroutines.flow.map
+
+class IssueListRepositoryImpl(
+    val issueDao: IssueDao,
+): IssueListRepository {
+
+    override fun loadAllIssues(): Flow<Result<List<Issue>>> {
+        return issueDao.loadAllIssues().map<List<IssueEntity>, Result<List<Issue>>> { issueList ->
+            Result.Success(issueList.map { it.toDomain() })
+        }.catch {
+            emit(Result.Error(it, "Failed to load issues"))
+        }
+    }
+
+    override suspend fun insertIssue(issue: Issue): Result<Unit> {
+        return try {
+            issueDao.insertIssue(issue.toEntity())
+            Result.Success(Unit)
+        } catch (e: Exception) {
+            Result.Error(e, "Failed to insert issue")
+        }
+    }
+
+    override suspend fun updateIssue(issue: Issue): Result<Unit> {
+        return try {
+            issueDao.updateIssue(issue.toEntity())
+            Result.Success(Unit)
+        } catch (e: Exception) {
+            Result.Error(e, "Failed to update issue")
+        }
+    }
+
+    override suspend fun updateIssueSyncStatus(id: String, syncStatus: IssueSyncStatus): Result<Unit> {
+        return try {
+            issueDao.updateIssueSyncStatus(id, syncStatus)
+            Result.Success(Unit)
+        } catch (e: Exception) {
+            Result.Error(e, "Failed to update issue sync status")
+        }
+    }
+}
