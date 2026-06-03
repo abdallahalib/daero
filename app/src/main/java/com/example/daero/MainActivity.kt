@@ -75,6 +75,7 @@ class MainActivity : ComponentActivity() {
                     composable("new_issue") {
                         NewIssueScreen(
                             preview = newIssueViewModel.preview,
+                            imageCapture = newIssueViewModel.imageCapture,
                             newIssueUiState = newIssueUiState,
                             onIntent = { intent ->
                                 newIssueViewModel.handleIntent(intent)
