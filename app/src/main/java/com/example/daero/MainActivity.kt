@@ -12,6 +12,7 @@ import androidx.navigation.compose.rememberNavController
 import com.example.daero.issue_list.presentation.IssueListEffect
 import com.example.daero.issue_list.presentation.IssueListScreen
 import com.example.daero.issue_list.presentation.IssueListViewModel
+import com.example.daero.new_issue.NewIssueEffect
 import com.example.daero.new_issue.NewIssueViewModel
 import com.example.daero.new_issue.presenation.NewIssueScreen
 import com.example.daero.ui.theme.DaeroTheme
@@ -43,6 +44,16 @@ class MainActivity : ComponentActivity() {
                     when (it) {
                         is IssueListEffect.NavigateToNewIssueScreen -> {
                             navController.navigate("new_issue")
+                        }
+                    }
+
+                }
+            }
+            LaunchedEffect(Unit) {
+                newIssueViewModel.effect.collect {
+                    when (it) {
+                        is NewIssueEffect.NavigateBack -> {
+                            navController.navigateUp()
                         }
                     }
 
