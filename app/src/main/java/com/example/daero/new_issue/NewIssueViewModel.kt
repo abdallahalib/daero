@@ -153,7 +153,8 @@ class NewIssueViewModel(
                 _effect.trySend(NewIssueEffect.NavigateBack)
                 _uiState.update {
                     it.copy(
-                        capturedImage = null
+                        capturedImage = null,
+                        isLoading = false
                     )
                 }
             } else {
