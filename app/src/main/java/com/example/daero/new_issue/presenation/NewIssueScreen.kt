@@ -55,6 +55,7 @@ fun NewIssueScreen(
             imageCapture = imageCapture,
             onCaptureClicked = { onIntent(NewIssueIntent.OnCapturePhotoClicked) },
             capturedImage = newIssueUiState.capturedImage,
+            isCapturing = newIssueUiState.isCapturing,
         )
         if (newIssueUiState.isLoading) {
             Box(
