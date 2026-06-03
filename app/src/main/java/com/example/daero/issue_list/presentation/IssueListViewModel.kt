@@ -24,6 +24,7 @@ sealed class IssueListIntent {
 }
 
 sealed class IssueListEffect {
+    data object NavigateToNewIssueScreen : IssueListEffect()
 }
 class IssueListViewModel(
     private val repository: IssueListRepository
@@ -59,7 +60,7 @@ class IssueListViewModel(
     fun handleIntent(intent: IssueListIntent) {
         when (intent) {
             is IssueListIntent.OnAddIssueClicked -> {
-                TODO("Not implemented")
+                _effect.trySend(IssueListEffect.NavigateToNewIssueScreen)
             }
         }
     }

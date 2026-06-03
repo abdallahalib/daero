@@ -9,6 +9,7 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
+import com.example.daero.issue_list.presentation.IssueListEffect
 import com.example.daero.issue_list.presentation.IssueListScreen
 import com.example.daero.issue_list.presentation.IssueListViewModel
 import com.example.daero.new_issue.NewIssueViewModel
@@ -39,6 +40,11 @@ class MainActivity : ComponentActivity() {
             val navController = rememberNavController()
             LaunchedEffect(Unit) {
                 issueListViewModel.effect.collect {
+                    when (it) {
+                        is IssueListEffect.NavigateToNewIssueScreen -> {
+                            navController.navigate("new_issue")
+                        }
+                    }
 
                 }
             }
