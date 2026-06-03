@@ -18,15 +18,11 @@ fun CaptureButton(
     onClick: () -> Unit,
 ) {
     Box(
-        modifier = Modifier
+        modifier = modifier
             .size(64.dp)
             .clip(CircleShape)
             .background(Color.White)
-            .clickable(
-                onClick = {
-                    TODO("Not implemented")
-                }
-            )
+            .clickable(onClick = onClick)
     )
 }
 
