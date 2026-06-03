@@ -1,5 +1,6 @@
 package com.example.daero.new_issue
 
+import android.util.Log
 import androidx.camera.core.ImageCapture
 import androidx.camera.core.ImageCaptureException
 import androidx.camera.core.Preview
@@ -17,6 +18,7 @@ import java.util.concurrent.Executors
 data class NewIssueUiState(
     val surfaceRequest: SurfaceRequest? = null,
     val isLoading: Boolean = false,
+    val isCapturing: Boolean = false,
     val capturedImage: String? = null,
 )
 
@@ -69,7 +71,9 @@ class NewIssueViewModel(
 
     private fun takePhoto() {
         _uiState.update {
-            it.copy(isLoading = true)
+            it.copy(
+                isCapturing = true
+            )
         }
 
         val outputFile = appStorage.createImageFile()
@@ -82,7 +86,7 @@ class NewIssueViewModel(
                 override fun onImageSaved(outputFileResults: ImageCapture.OutputFileResults) {
                     _uiState.update {
                         it.copy(
-                            isLoading = false,
+                            isCapturing = false,
                             capturedImage = outputFile.absolutePath
                         )
                     }
@@ -90,7 +94,7 @@ class NewIssueViewModel(
 
                 override fun onError(exception: ImageCaptureException) {
                     _uiState.update {
-                        it.copy(isLoading = false)
+                        it.copy(isCapturing = false)
                     }
                 }
             }
