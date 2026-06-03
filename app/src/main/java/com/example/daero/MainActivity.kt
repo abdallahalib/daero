@@ -4,6 +4,7 @@ import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
+import androidx.compose.runtime.LaunchedEffect
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
@@ -36,6 +37,11 @@ class MainActivity : ComponentActivity() {
             val issueListUiState = issueListViewModel.uiState.collectAsStateWithLifecycle().value
             val newIssueUiState = newIssueViewModel.uiState.collectAsStateWithLifecycle().value
             val navController = rememberNavController()
+            LaunchedEffect(Unit) {
+                issueListViewModel.effect.collect {
+
+                }
+            }
             DaeroTheme(darkTheme = true) {
                 NavHost(
                     navController = navController,
