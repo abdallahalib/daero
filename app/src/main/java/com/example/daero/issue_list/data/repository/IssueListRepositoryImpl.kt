@@ -13,7 +13,7 @@ import kotlinx.coroutines.flow.catch
 import kotlinx.coroutines.flow.map
 
 class IssueListRepositoryImpl(
-    val issueDao: IssueDao,
+    private val issueDao: IssueDao,
 ): IssueListRepository {
 
     override fun loadAllIssues(): Flow<Result<List<Issue>>> {
