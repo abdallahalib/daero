@@ -7,6 +7,7 @@ import androidx.camera.core.Preview
 import androidx.camera.core.SurfaceRequest
 import androidx.camera.lifecycle.ProcessCameraProvider
 import androidx.camera.lifecycle.awaitInstance
+import androidx.camera.viewfinder.core.ImplementationMode
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
@@ -65,7 +66,8 @@ fun CameraPreview(
             surfaceRequest = request,
             modifier = modifier.fillMaxSize(),
             contentScale = ContentScale.Fit,
-            alignment = Alignment.TopCenter
+            alignment = Alignment.TopCenter,
+            implementationMode = ImplementationMode.EMBEDDED
         )
     }
 }
