@@ -7,6 +7,7 @@ import kotlinx.coroutines.flow.Flow
 
 interface IssueListRepository {
     fun loadAllIssues(): Flow<Result<List<Issue>>>
+    fun loadIssueById(id: String): Flow<Result<Issue>>
     suspend fun insertIssue(issue: Issue): Result<Unit>
     suspend fun updateIssue(issue: Issue): Result<Unit>
     suspend fun updateIssueSyncStatus(id: String, syncStatus: IssueSyncStatus): Result<Unit>

@@ -24,6 +24,15 @@ class IssueListRepositoryImpl(
         }
     }
 
+    override fun loadIssueById(id: String): Flow<Result<Issue>> {
+        return issueDao.loadIssueById(id).map { issue ->
+            issue?.let { Result.Success(it.toDomain()) }
+                ?: Result.Error(NoSuchElementException("Issue not found"), "Issue not found")
+        }.catch {
+            emit(Result.Error(it, "Failed to load issue"))
+        }
+    }
+
     override suspend fun insertIssue(issue: Issue): Result<Unit> {
         return try {
             issueDao.insertIssue(issue.toEntity())
