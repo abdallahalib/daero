@@ -2,6 +2,7 @@ package com.example.daero.issue_list.di
 
 import com.example.daero.core.storage.AppStorage
 import com.example.daero.core.storage.AppStorageImpl
+import com.example.daero.issue_detail.IssueDetailViewModel
 import com.example.daero.issue_list.presentation.IssueListViewModel
 import com.example.daero.new_issue.NewIssueViewModel
 import org.koin.android.ext.koin.androidContext
@@ -14,6 +15,9 @@ val viewModelModule = module {
     }
     viewModel {
         IssueListViewModel(get())
+    }
+    viewModel { (issueId: String) ->
+        IssueDetailViewModel(issueId, get())
     }
     viewModel {
         NewIssueViewModel(get(), get())
