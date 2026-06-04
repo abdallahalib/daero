@@ -1,7 +1,5 @@
 package com.example.daero.new_issue.presenation
 
-import androidx.camera.core.ImageCapture
-import androidx.camera.core.Preview
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
@@ -25,21 +23,22 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.res.vectorResource
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.example.daero.R
 import com.example.daero.issue_list.domain.model.IssuePriority
 import com.example.daero.issue_list.domain.model.IssueStatus
 import com.example.daero.new_issue.NewIssueIntent
-import com.example.daero.new_issue.NewIssueUiState
+import com.example.daero.new_issue.NewIssueViewModel
 import kotlinx.coroutines.launch
+import org.koin.androidx.compose.koinViewModel
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun NewIssueScreen(
-    preview: Preview,
-    imageCapture: ImageCapture,
-    newIssueUiState: NewIssueUiState,
-    onIntent: (NewIssueIntent) -> Unit,
+    newIssueViewModel: NewIssueViewModel = koinViewModel(),
+    onBackClicked: () -> Unit,
 ) {
+    val newIssueUiState = newIssueViewModel.uiState.collectAsStateWithLifecycle().value
     val pagerState = rememberPagerState(initialPage = 0, pageCount = { 2 })
     val coroutineScope = rememberCoroutineScope()
     val titleState = rememberTextFieldState()
@@ -61,7 +60,7 @@ fun NewIssueScreen(
                                     pagerState.animateScrollToPage(pagerState.currentPage - 1)
                                 }
                             } else {
-                                onIntent(NewIssueIntent.OnBackClicked)
+                                onBackClicked()
                             }
                         }
                     ) {
@@ -81,15 +80,19 @@ fun NewIssueScreen(
         ) {
             when (it) {
                 0 -> TakePhotoContent(
-                    preview = preview,
+                    preview = newIssueViewModel.preview,
                     surfaceRequest = newIssueUiState.surfaceRequest,
-                    imageCapture = imageCapture,
-                    onCaptureClicked = { onIntent(NewIssueIntent.OnCapturePhotoClicked) },
+                    imageCapture = newIssueViewModel.imageCapture,
+                    onCaptureClicked = {
+                        newIssueViewModel.handleIntent(NewIssueIntent.OnCapturePhotoClicked)
+                    },
                     capturedImage = newIssueUiState.capturedImage,
                     isCapturing = newIssueUiState.isCapturing,
-                    onRetakeClicked = { onIntent(NewIssueIntent.OnRetakeClicked) },
+                    onRetakeClicked = {
+                        newIssueViewModel.handleIntent(NewIssueIntent.OnRetakeClicked)
+                    },
                     onConfirmClicked = {
-                        onIntent(NewIssueIntent.OnSubmitClicked)
+                        newIssueViewModel.handleIntent(NewIssueIntent.OnSubmitClicked)
                         if (pagerState.canScrollForward) {
                             coroutineScope.launch {
                                 pagerState.animateScrollToPage(pagerState.currentPage + 1)
@@ -111,7 +114,7 @@ fun NewIssueScreen(
                         selectedStatus = it
                     },
                     onSaveClicked = {
-                        onIntent(
+                        newIssueViewModel.handleIntent(
                             NewIssueIntent.OnSaveClicked(
                                 title = titleState.text.toString(),
                                 notes = notesState.text.toString(),
