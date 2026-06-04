@@ -19,6 +19,8 @@ import com.example.daero.navigation.NewIssueRoute
 import com.example.daero.new_issue.presenation.NewIssueScreen
 import com.example.daero.ui.theme.DaeroTheme
 import androidx.navigation.toRoute
+import com.example.daero.edit_issue.presentation.EditIssueScreen
+import com.example.daero.navigation.EditIssueRoute
 import org.koin.androidx.viewmodel.ext.android.viewModel
 
 class MainActivity : ComponentActivity() {
@@ -30,6 +32,7 @@ class MainActivity : ComponentActivity() {
             TODO("Not implemented")
         }
     }
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         if (checkSelfPermission(android.Manifest.permission.CAMERA) != android.content.pm.PackageManager.PERMISSION_GRANTED) {
@@ -74,6 +77,13 @@ class MainActivity : ComponentActivity() {
                     composable<IssueDetailRoute> { backStackEntry ->
                         val route = backStackEntry.toRoute<IssueDetailRoute>()
                         IssueDetailScreen(
+                            issueId = route.issueId,
+                            onBackClicked = { navController.navigateUp() },
+                        )
+                    }
+                    composable<EditIssueRoute> { backStackEntry ->
+                        val route = backStackEntry.toRoute<EditIssueRoute>()
+                        EditIssueScreen(
                             issueId = route.issueId,
                             onBackClicked = { navController.navigateUp() },
                         )

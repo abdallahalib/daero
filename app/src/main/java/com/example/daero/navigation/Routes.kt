@@ -10,3 +10,6 @@ object NewIssueRoute
 
 @Serializable
 data class IssueDetailRoute(val issueId: String)
+
+@Serializable
+data class EditIssueRoute(val issueId: String)
