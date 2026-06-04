@@ -129,41 +129,6 @@ class NewIssueViewModel(
     }
 
     private fun submitPhoto() {
-        _uiState.update {
-            it.copy(
-                isLoading = true
-            )
-        }
-        viewModelScope.launch {
-            val result = issueListRepository.insertIssue(
-                Issue(
-                    id = UUID.randomUUID().toString(),
-                    title = "New Issue",
-                    notes = "Description of the new issue",
-                    location = "Unknown Location",
-                    priority = IssuePriority.MEDIUM,
-                    status = IssueStatus.OPEN,
-                    syncStatus = IssueSyncStatus.PENDING,
-                    photoPath = _uiState.value.capturedImage ?: return@launch,
-                    createdAt = System.currentTimeMillis(),
-                    updatedAt = System.currentTimeMillis(),
-                )
-            )
-            if (result is Result.Success) {
-                _effect.trySend(NewIssueEffect.NavigateBack)
-                _uiState.update {
-                    it.copy(
-                        capturedImage = null,
-                        isLoading = false
-                    )
-                }
-            } else {
-                _uiState.update {
-                    it.copy(
-                        isLoading = false
-                    )
-                }
-            }
-        }
+        // Add the captured image to draft
     }
 }
