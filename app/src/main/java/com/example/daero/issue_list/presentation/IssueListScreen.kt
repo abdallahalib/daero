@@ -1,6 +1,5 @@
 package com.example.daero.issue_list.presentation
 
-import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
@@ -63,7 +62,9 @@ fun IssueListScreen(
         IssueList(
             modifier = Modifier.padding(paddingValues),
             issues = issueListUiState.issues,
-            onItemClick = { TODO("Not implemented") }
+            onItemClick = { issueUi ->
+                onIntent(IssueListIntent.OnIssueClicked(issueUi.id))
+            }
         )
         if (issueListUiState.isLoading) {
             Box(
