@@ -14,6 +14,7 @@ import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -27,6 +28,7 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.example.daero.R
 import com.example.daero.issue_list.domain.model.IssuePriority
 import com.example.daero.issue_list.domain.model.IssueStatus
+import com.example.daero.new_issue.NewIssueEffect
 import com.example.daero.new_issue.NewIssueIntent
 import com.example.daero.new_issue.NewIssueViewModel
 import kotlinx.coroutines.launch
@@ -40,12 +42,25 @@ fun NewIssueScreen(
 ) {
     val newIssueUiState = newIssueViewModel.uiState.collectAsStateWithLifecycle().value
     val pagerState = rememberPagerState(initialPage = 0, pageCount = { 2 })
-    val coroutineScope = rememberCoroutineScope()
     val titleState = rememberTextFieldState()
     val notesState = rememberTextFieldState()
     val locationState = rememberTextFieldState()
     var selectedPriority by remember { mutableStateOf<IssuePriority>(IssuePriority.MEDIUM) }
     var selectedStatus by remember { mutableStateOf<IssueStatus>(IssueStatus.OPEN) }
+    LaunchedEffect(newIssueUiState.currentPage) {
+        if (newIssueUiState.currentPage != pagerState.currentPage) {
+            pagerState.animateScrollToPage(newIssueUiState.currentPage)
+        }
+    }
+    LaunchedEffect(Unit) {
+        newIssueViewModel.effect.collect {
+            when (it) {
+                is NewIssueEffect.NavigateBack -> {
+                    onBackClicked()
+                }
+            }
+        }
+    }
     Scaffold(
         topBar = {
             TopAppBar(
@@ -55,13 +70,7 @@ fun NewIssueScreen(
                 navigationIcon = {
                     IconButton(
                         onClick = {
-                            if (pagerState.canScrollBackward) {
-                                coroutineScope.launch {
-                                    pagerState.animateScrollToPage(pagerState.currentPage - 1)
-                                }
-                            } else {
-                                onBackClicked()
-                            }
+                            newIssueViewModel.handleIntent(NewIssueIntent.OnBackClicked)
                         }
                     ) {
                         Icon(
@@ -93,11 +102,6 @@ fun NewIssueScreen(
                     },
                     onConfirmClicked = {
                         newIssueViewModel.handleIntent(NewIssueIntent.OnSubmitClicked)
-                        if (pagerState.canScrollForward) {
-                            coroutineScope.launch {
-                                pagerState.animateScrollToPage(pagerState.currentPage + 1)
-                            }
-                        }
                     },
                 )
 

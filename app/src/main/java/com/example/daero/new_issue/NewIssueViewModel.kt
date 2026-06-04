@@ -31,6 +31,7 @@ data class NewIssueUiState(
     val titleError: String? = null,
     val notesError: String? = null,
     val locationError: String? = null,
+    val currentPage: Int = 0,
 )
 
 sealed class NewIssueIntent {
@@ -80,7 +81,15 @@ class NewIssueViewModel(
     fun handleIntent(intent: NewIssueIntent) {
         when (intent) {
             is NewIssueIntent.OnBackClicked -> {
-                _effect.trySend(NewIssueEffect.NavigateBack)
+                if (_uiState.value.currentPage == 0) {
+                    _effect.trySend(NewIssueEffect.NavigateBack)
+                } else {
+                    _uiState.update {
+                        it.copy(
+                            currentPage = it.currentPage - 1
+                        )
+                    }
+                }
             }
 
             is NewIssueIntent.OnCapturePhotoClicked -> {
@@ -198,5 +207,10 @@ class NewIssueViewModel(
 
     private fun submitPhoto() {
         // Add the captured image to draft
+        _uiState.update {
+            it.copy(
+                currentPage = 1
+            )
+        }
     }
 }
