@@ -1,6 +1,5 @@
 package com.example.daero.new_issue
 
-import android.util.Log
 import androidx.camera.core.ImageCapture
 import androidx.camera.core.ImageCaptureException
 import androidx.camera.core.Preview
@@ -38,6 +37,14 @@ sealed class NewIssueIntent {
     object OnRetakeClicked : NewIssueIntent()
 
     object OnSubmitClicked : NewIssueIntent()
+
+    class OnSaveClicked(
+        val title: String,
+        val notes: String,
+        val location: String,
+        val priority: IssuePriority,
+        val status: IssueStatus,
+    ) : NewIssueIntent()
 }
 
 sealed class NewIssueEffect {
@@ -87,6 +94,51 @@ class NewIssueViewModel(
 
             NewIssueIntent.OnSubmitClicked -> {
                 submitPhoto()
+            }
+
+            is NewIssueIntent.OnSaveClicked -> {
+                save(
+                    title = intent.title,
+                    notes = intent.notes,
+                    location = intent.location,
+                    priority = intent.priority,
+                    status = intent.status,
+                )
+            }
+        }
+    }
+
+    private fun save(
+        title: String,
+        notes: String,
+        location: String,
+        priority: IssuePriority,
+        status: IssueStatus
+    ) {
+        _uiState.update { it.copy(isLoading = true) }
+        viewModelScope.launch {
+            val issue = Issue(
+                id = UUID.randomUUID().toString(),
+                title = title,
+                notes = notes,
+                location = location,
+                priority = priority,
+                status = status,
+                syncStatus = IssueSyncStatus.PENDING,
+                photoPath = _uiState.value.capturedImage ?: return@launch,
+                createdAt = System.currentTimeMillis(),
+                updatedAt = System.currentTimeMillis(),
+            )
+            val result = issueListRepository.insertIssue(issue)
+            when (result) {
+                is Result.Success -> {
+                    _uiState.update { it.copy(isLoading = false, capturedImage = null) }
+                    _effect.send(NewIssueEffect.NavigateBack)
+                }
+
+                else -> {
+                    _uiState.update { it.copy(isLoading = false) }
+                }
             }
         }
     }
