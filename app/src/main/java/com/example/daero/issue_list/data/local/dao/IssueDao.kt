@@ -15,6 +15,9 @@ interface IssueDao {
     @Query("SELECT * FROM issues")
     fun loadAllIssues(): Flow<List<IssueEntity>>
 
+    @Query("SELECT * FROM issues WHERE id = :id LIMIT 1")
+    fun loadIssueById(id: String): Flow<IssueEntity?>
+
     @Insert(onConflict = OnConflictStrategy.ABORT)
     suspend fun insertIssue(issue: IssueEntity)
 
