@@ -1,4 +1,4 @@
-package com.example.daero.new_issue.presenation
+package com.example.daero.shared.presenation
 
 import androidx.camera.core.ImageCapture
 import androidx.camera.core.Preview
@@ -20,6 +20,7 @@ import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.unit.dp
 import coil3.compose.AsyncImage
+import com.example.daero.R
 import com.example.daero.new_issue.components.CaptureButton
 
 @Composable
@@ -65,7 +66,7 @@ fun TakePhotoContent(
                         onClick = onRetakeClicked
                     ) {
                         Icon(
-                            imageVector = ImageVector.vectorResource(id = com.example.daero.R.drawable.refresh_24px),
+                            imageVector = ImageVector.vectorResource(id = R.drawable.refresh_24px),
                             contentDescription = "Retake"
                         )
                     }
@@ -78,7 +79,7 @@ fun TakePhotoContent(
                         onClick = onConfirmClicked,
                     ) {
                         Icon(
-                            imageVector = ImageVector.vectorResource(id = com.example.daero.R.drawable.check_24px),
+                            imageVector = ImageVector.vectorResource(id = R.drawable.check_24px),
                             contentDescription = "Confirm"
                         )
                     }

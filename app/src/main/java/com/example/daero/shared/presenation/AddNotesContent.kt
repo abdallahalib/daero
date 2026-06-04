@@ -1,4 +1,4 @@
-package com.example.daero.new_issue.presenation
+package com.example.daero.shared.presenation
 
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -19,7 +19,6 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.example.daero.issue_list.domain.model.IssuePriority
 import com.example.daero.issue_list.domain.model.IssueStatus
-import com.example.daero.new_issue.NewIssueIntent
 import com.example.daero.new_issue.components.EnumField
 
 @OptIn(ExperimentalMaterial3Api::class)

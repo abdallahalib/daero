@@ -1,4 +1,4 @@
-package com.example.daero.new_issue.presenation
+package com.example.daero.shared.presenation
 
 import androidx.camera.compose.CameraXViewfinder
 import androidx.camera.core.CameraSelector

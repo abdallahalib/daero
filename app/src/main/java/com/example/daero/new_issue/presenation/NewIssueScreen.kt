@@ -18,7 +18,6 @@ import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
-import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -31,7 +30,8 @@ import com.example.daero.issue_list.domain.model.IssueStatus
 import com.example.daero.new_issue.NewIssueEffect
 import com.example.daero.new_issue.NewIssueIntent
 import com.example.daero.new_issue.NewIssueViewModel
-import kotlinx.coroutines.launch
+import com.example.daero.shared.presenation.AddNotesContent
+import com.example.daero.shared.presenation.TakePhotoContent
 import org.koin.androidx.compose.koinViewModel
 
 @OptIn(ExperimentalMaterial3Api::class)
