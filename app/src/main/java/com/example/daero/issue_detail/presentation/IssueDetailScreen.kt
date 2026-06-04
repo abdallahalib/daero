@@ -19,6 +19,7 @@ import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -31,6 +32,8 @@ import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import coil3.compose.AsyncImage
 import com.example.daero.R
+import com.example.daero.issue_detail.IssueDetailEffect
+import com.example.daero.issue_detail.IssueDetailIntent
 import com.example.daero.issue_detail.IssueDetailUiState
 import com.example.daero.issue_detail.IssueDetailViewModel
 import com.example.daero.issue_list.presentation.model.IssueUi
@@ -42,12 +45,26 @@ import org.koin.core.parameter.parametersOf
 fun IssueDetailScreen(
     issueId: String,
     onBackClicked: () -> Unit,
+    onEditClicked: (String) -> Unit,
     viewModel: IssueDetailViewModel = koinViewModel(parameters = { parametersOf(issueId) }),
 ) {
+    LaunchedEffect(Unit) {
+        viewModel.effect.collect { effect ->
+            when (effect) {
+                is IssueDetailEffect.NavigateBack -> onBackClicked()
+                is IssueDetailEffect.NavigateToEditIssue -> onEditClicked(issueId)
+            }
+        }
+    }
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
     IssueDetailContent(
         uiState = uiState,
-        onBackClicked = onBackClicked,
+        onBackClicked = {
+            viewModel.handleIntent(IssueDetailIntent.OnBackClicked)
+        },
+        onEditClicked = {
+            viewModel.handleIntent(IssueDetailIntent.OnEditClicked)
+        },
     )
 }
 
@@ -56,6 +73,7 @@ fun IssueDetailScreen(
 private fun IssueDetailContent(
     uiState: IssueDetailUiState,
     onBackClicked: () -> Unit,
+    onEditClicked: () -> Unit,
 ) {
     Scaffold(
         topBar = {
@@ -68,6 +86,14 @@ private fun IssueDetailContent(
                         Icon(
                             imageVector = ImageVector.vectorResource(R.drawable.arrow_back_24px),
                             contentDescription = "Back"
+                        )
+                    }
+                },
+                actions = {
+                    IconButton(onClick = onEditClicked) {
+                        Icon(
+                            imageVector = ImageVector.vectorResource(R.drawable.edit_24px),
+                            contentDescription = "Edit"
                         )
                     }
                 }
@@ -161,6 +187,7 @@ private fun IssueDetailContentPreview() {
             ),
         ),
         onBackClicked = {},
+        onEditClicked = {},
     )
 }
 
