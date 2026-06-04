@@ -34,6 +34,9 @@ fun AddNotesContent(
     status: IssueStatus,
     onStatusSelected: (IssueStatus) -> Unit,
     onSaveClicked: () -> Unit,
+    titleError: String?,
+    notesError: String?,
+    locationError: String?,
 ) {
     Column(
         modifier = modifier.fillMaxSize().padding(16.dp).verticalScroll(rememberScrollState()),
@@ -43,16 +46,22 @@ fun AddNotesContent(
             state = title,
             label = { Text("Title") },
             modifier = Modifier.fillMaxWidth(),
+            isError = titleError != null,
+            supportingText = { Text(titleError ?: "") }
         )
         OutlinedTextField(
             state = notes,
             label = { Text("Notes") },
             modifier = Modifier.fillMaxWidth(),
+            isError = notesError != null,
+            supportingText = { Text(notesError ?: "") }
         )
         OutlinedTextField(
             state = location,
             label = { Text("Location") },
             modifier = Modifier.fillMaxWidth(),
+            isError = locationError != null,
+            supportingText = { Text(locationError ?: "") }
         )
         EnumField(
             label = "Priority",
@@ -90,5 +99,8 @@ fun AddNotesContentPreview() {
         status = IssueStatus.OPEN,
         onStatusSelected = {},
         onSaveClicked = {},
+        titleError = null,
+        notesError = null,
+        locationError = null,
     )
 }
