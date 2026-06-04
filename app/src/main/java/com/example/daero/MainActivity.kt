@@ -9,13 +9,16 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
+import com.example.daero.issue_detail.presentation.IssueDetailScreen
 import com.example.daero.issue_list.presentation.IssueListEffect
 import com.example.daero.issue_list.presentation.IssueListScreen
 import com.example.daero.issue_list.presentation.IssueListViewModel
-import com.example.daero.new_issue.NewIssueEffect
-import com.example.daero.new_issue.NewIssueViewModel
+import com.example.daero.navigation.IssueDetailRoute
+import com.example.daero.navigation.IssueListRoute
+import com.example.daero.navigation.NewIssueRoute
 import com.example.daero.new_issue.presenation.NewIssueScreen
 import com.example.daero.ui.theme.DaeroTheme
+import androidx.navigation.toRoute
 import org.koin.androidx.viewmodel.ext.android.viewModel
 
 class MainActivity : ComponentActivity() {
@@ -40,7 +43,11 @@ class MainActivity : ComponentActivity() {
                 issueListViewModel.effect.collect {
                     when (it) {
                         is IssueListEffect.NavigateToNewIssueScreen -> {
-                            navController.navigate("new_issue")
+                            navController.navigate(NewIssueRoute)
+                        }
+
+                        is IssueListEffect.NavigateToIssueDetailScreen -> {
+                            navController.navigate(IssueDetailRoute(it.issueId))
                         }
                     }
 
@@ -49,9 +56,9 @@ class MainActivity : ComponentActivity() {
             DaeroTheme(darkTheme = true) {
                 NavHost(
                     navController = navController,
-                    startDestination = "issue_list"
+                    startDestination = IssueListRoute
                 ) {
-                    composable("issue_list") {
+                    composable<IssueListRoute> {
                         IssueListScreen(
                             issueListUiState = issueListUiState,
                             onIntent = { intent ->
@@ -59,8 +66,15 @@ class MainActivity : ComponentActivity() {
                             }
                         )
                     }
-                    composable("new_issue") {
+                    composable<NewIssueRoute> {
                         NewIssueScreen(
+                            onBackClicked = { navController.navigateUp() },
+                        )
+                    }
+                    composable<IssueDetailRoute> { backStackEntry ->
+                        val route = backStackEntry.toRoute<IssueDetailRoute>()
+                        IssueDetailScreen(
+                            issueId = route.issueId,
                             onBackClicked = { navController.navigateUp() },
                         )
                     }
