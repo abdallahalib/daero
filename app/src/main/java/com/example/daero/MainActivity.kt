@@ -20,8 +20,6 @@ import org.koin.androidx.viewmodel.ext.android.viewModel
 
 class MainActivity : ComponentActivity() {
     private val issueListViewModel: IssueListViewModel by viewModel()
-    private val newIssueViewModel: NewIssueViewModel by viewModel()
-
     private val cameraPermissionLauncher = registerForActivityResult(
         androidx.activity.result.contract.ActivityResultContracts.RequestPermission()
     ) { isGranted ->
@@ -37,23 +35,12 @@ class MainActivity : ComponentActivity() {
         enableEdgeToEdge()
         setContent {
             val issueListUiState = issueListViewModel.uiState.collectAsStateWithLifecycle().value
-            val newIssueUiState = newIssueViewModel.uiState.collectAsStateWithLifecycle().value
             val navController = rememberNavController()
             LaunchedEffect(Unit) {
                 issueListViewModel.effect.collect {
                     when (it) {
                         is IssueListEffect.NavigateToNewIssueScreen -> {
                             navController.navigate("new_issue")
-                        }
-                    }
-
-                }
-            }
-            LaunchedEffect(Unit) {
-                newIssueViewModel.effect.collect {
-                    when (it) {
-                        is NewIssueEffect.NavigateBack -> {
-                            navController.navigateUp()
                         }
                     }
 
@@ -74,12 +61,7 @@ class MainActivity : ComponentActivity() {
                     }
                     composable("new_issue") {
                         NewIssueScreen(
-                            preview = newIssueViewModel.preview,
-                            imageCapture = newIssueViewModel.imageCapture,
-                            newIssueUiState = newIssueUiState,
-                            onIntent = { intent ->
-                                newIssueViewModel.handleIntent(intent)
-                            }
+                            onBackClicked = { navController.navigateUp() },
                         )
                     }
                 }
