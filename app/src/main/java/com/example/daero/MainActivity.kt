@@ -79,6 +79,7 @@ class MainActivity : ComponentActivity() {
                         IssueDetailScreen(
                             issueId = route.issueId,
                             onBackClicked = { navController.navigateUp() },
+                            onEditClicked = { navController.navigate(EditIssueRoute(route.issueId)) },
                         )
                     }
                     composable<EditIssueRoute> { backStackEntry ->
