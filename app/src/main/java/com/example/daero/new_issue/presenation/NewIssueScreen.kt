@@ -121,6 +121,9 @@ fun NewIssueScreen(
                             )
                         )
                     },
+                    titleError = newIssueUiState.titleError,
+                    notesError = newIssueUiState.notesError,
+                    locationError = newIssueUiState.locationError,
                 )
             }
         }
