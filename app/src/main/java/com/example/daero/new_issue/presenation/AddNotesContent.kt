@@ -19,6 +19,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.example.daero.issue_list.domain.model.IssuePriority
 import com.example.daero.issue_list.domain.model.IssueStatus
+import com.example.daero.new_issue.NewIssueIntent
 import com.example.daero.new_issue.components.EnumField
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -32,6 +33,7 @@ fun AddNotesContent(
     onPrioritySelected: (IssuePriority) -> Unit,
     status: IssueStatus,
     onStatusSelected: (IssueStatus) -> Unit,
+    onSaveClicked: () -> Unit,
 ) {
     Column(
         modifier = modifier.fillMaxSize().padding(16.dp).verticalScroll(rememberScrollState()),
@@ -68,7 +70,7 @@ fun AddNotesContent(
         )
         Spacer(modifier = Modifier.weight(1f))
         FilledTonalButton(
-            onClick = { TODO("Not implemented") },
+            onClick = onSaveClicked,
             modifier = Modifier.fillMaxWidth(),
         ) {
             Text("Save")
@@ -87,5 +89,6 @@ fun AddNotesContentPreview() {
         onPrioritySelected = {},
         status = IssueStatus.OPEN,
         onStatusSelected = {},
+        onSaveClicked = {},
     )
 }
