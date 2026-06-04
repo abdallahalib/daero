@@ -28,6 +28,9 @@ data class NewIssueUiState(
     val isLoading: Boolean = false,
     val isCapturing: Boolean = false,
     val capturedImage: String? = null,
+    val titleError: String? = null,
+    val notesError: String? = null,
+    val locationError: String? = null,
 )
 
 sealed class NewIssueIntent {
@@ -115,6 +118,19 @@ class NewIssueViewModel(
         priority: IssuePriority,
         status: IssueStatus
     ) {
+        val titleError = if (title.isBlank()) "Title cannot be empty" else null
+        val notesError = if (notes.isBlank()) "Notes cannot be empty" else null
+        val locationError = if (location.isBlank()) "Location cannot be empty" else null
+        _uiState.update {
+            it.copy(
+                titleError = titleError,
+                notesError = notesError,
+                locationError = locationError,
+            )
+        }
+        if (titleError != null || notesError != null || locationError != null) {
+            return
+        }
         _uiState.update { it.copy(isLoading = true) }
         viewModelScope.launch {
             val issue = Issue(
