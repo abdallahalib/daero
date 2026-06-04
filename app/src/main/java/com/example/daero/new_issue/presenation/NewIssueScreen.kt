@@ -110,6 +110,17 @@ fun NewIssueScreen(
                     onStatusSelected = {
                         selectedStatus = it
                     },
+                    onSaveClicked = {
+                        onIntent(
+                            NewIssueIntent.OnSaveClicked(
+                                title = titleState.text.toString(),
+                                notes = notesState.text.toString(),
+                                location = locationState.text.toString(),
+                                priority = selectedPriority,
+                                status = selectedStatus,
+                            )
+                        )
+                    },
                 )
             }
         }
