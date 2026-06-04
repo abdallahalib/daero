@@ -97,6 +97,7 @@ class NewIssueViewModel(
             }
 
             is NewIssueIntent.OnRetakeClicked -> {
+                deleteCapturedImage()
                 _uiState.update {
                     it.copy(
                         capturedImage = null
@@ -212,5 +213,10 @@ class NewIssueViewModel(
                 currentPage = 1
             )
         }
+    }
+
+    private fun deleteCapturedImage() {
+        val capturedImagePath = _uiState.value.capturedImage ?: return
+        appStorage.deleteImageFile(capturedImagePath)
     }
 }
