@@ -26,4 +26,7 @@ interface IssueDao {
 
     @Query("UPDATE issues SET sync_status = :syncStatus WHERE id = :id")
     suspend fun updateIssueSyncStatus(id: String, syncStatus: IssueSyncStatus)
+
+    @Query("UPDATE issues SET photo_path = :photoPath WHERE id = :id")
+    suspend fun updateIssuePhotoPath(id: String, photoPath: String)
 }
