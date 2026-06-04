@@ -10,5 +10,14 @@ class AppStorageImpl(
         val imagesDir = File(context.filesDir, "images").apply { mkdirs() }
         return File(imagesDir, "daero_${System.currentTimeMillis()}.jpg")
     }
+
+    override fun deleteImageFile(filePath: String): Boolean {
+        val file = File(filePath)
+        return if (file.exists()) {
+            file.delete()
+        } else {
+            false
+        }
+    }
 }
 

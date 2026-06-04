@@ -4,5 +4,7 @@ import java.io.File
 
 interface AppStorage {
     fun createImageFile(): File
+
+    fun deleteImageFile(filePath: String): Boolean
 }
 
