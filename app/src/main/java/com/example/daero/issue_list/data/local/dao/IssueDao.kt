@@ -38,6 +38,6 @@ interface IssueDao {
     @Query("UPDATE issues SET photo_path = :photoPath, sync_status = :syncStatus WHERE id = :id")
     suspend fun updateIssuePhotoPathAndSyncStatus(id: String, photoPath: String, syncStatus: IssueSyncStatus)
 
-    @Query("SELECT id FROM issues WHERE sync_status = 'PENDING'")
+    @Query("SELECT id FROM issues WHERE sync_status = 'PENDING' AND is_draft = 0")
     suspend fun getAllPendingIssuesIds(): List<String>
 }
