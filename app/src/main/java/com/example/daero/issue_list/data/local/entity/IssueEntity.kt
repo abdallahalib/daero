@@ -21,6 +21,7 @@ data class IssueEntity(
     @ColumnInfo(name = "updated_at") val updatedAt: Long,
     @ColumnInfo(name = "sync_status") val syncStatus: IssueSyncStatus,
     @ColumnInfo(name = "is_draft") val isDraft: Boolean = false,
+    @ColumnInfo(name = "remote_id") val remoteId: String? = null,
 )
 
 fun IssueEntity.toDomain(): Issue {
@@ -35,7 +36,8 @@ fun IssueEntity.toDomain(): Issue {
         createdAt = createdAt,
         updatedAt = updatedAt,
         syncStatus = syncStatus,
-        isDraft = isDraft
+        isDraft = isDraft,
+        remoteId = remoteId,
     )
 }
 
@@ -51,6 +53,7 @@ fun Issue.toEntity(): IssueEntity {
         createdAt = createdAt,
         updatedAt = updatedAt,
         syncStatus = syncStatus,
-        isDraft = isDraft
-    )
+        isDraft = isDraft,
+        remoteId = remoteId,
+        )
 }

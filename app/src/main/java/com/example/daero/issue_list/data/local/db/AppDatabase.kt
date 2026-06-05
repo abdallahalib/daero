@@ -11,7 +11,7 @@ import com.example.daero.issue_list.data.local.entity.IssueEntity
 
 @Database(
     entities = [IssueEntity::class],
-    version = 2,
+    version = 3,
     exportSchema = true
 )
 @TypeConverters(Converters::class)
@@ -22,6 +22,11 @@ abstract class AppDatabase : RoomDatabase() {
         val MIGRATION_1_2 = object : Migration(1, 2) {
             override fun migrate(db: SupportSQLiteDatabase) {
                 db.execSQL("ALTER TABLE issues ADD COLUMN is_draft INTEGER NOT NULL DEFAULT 0")
+            }
+        }
+        val MIGRATION_2_3 = object : Migration(2, 3) {
+            override fun migrate(db: SupportSQLiteDatabase) {
+                db.execSQL("ALTER TABLE issues ADD COLUMN remote_id TEXT DEFAULT NULL")
             }
         }
     }

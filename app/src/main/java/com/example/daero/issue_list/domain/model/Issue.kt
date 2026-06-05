@@ -11,5 +11,6 @@ data class Issue(
     val syncStatus: IssueSyncStatus,
     val isDraft: Boolean = false,
     val createdAt: Long,
-    val updatedAt: Long
+    val updatedAt: Long,
+    val remoteId: String? = null
 )
