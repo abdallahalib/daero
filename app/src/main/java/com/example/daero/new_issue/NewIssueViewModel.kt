@@ -78,6 +78,8 @@ class NewIssueViewModel(
         .setCaptureMode(ImageCapture.CAPTURE_MODE_MINIMIZE_LATENCY)
         .build()
 
+    private val issueId = UUID.randomUUID().toString()
+
     fun handleIntent(intent: NewIssueIntent) {
         when (intent) {
             is NewIssueIntent.OnBackClicked -> {
@@ -144,7 +146,7 @@ class NewIssueViewModel(
         _uiState.update { it.copy(isLoading = true) }
         viewModelScope.launch {
             val issue = Issue(
-                id = UUID.randomUUID().toString(),
+                id = issueId,
                 title = title,
                 notes = notes,
                 location = location,
@@ -154,8 +156,9 @@ class NewIssueViewModel(
                 photoPath = _uiState.value.capturedImage ?: return@launch,
                 createdAt = System.currentTimeMillis(),
                 updatedAt = System.currentTimeMillis(),
+                isDraft = false
             )
-            val result = issueListRepository.insertIssue(issue)
+            val result = issueListRepository.updateIssue(issue)
             when (result) {
                 is Result.Success -> {
                     _uiState.update { it.copy(isLoading = false, capturedImage = null) }
@@ -207,11 +210,39 @@ class NewIssueViewModel(
     }
 
     private fun submitPhoto() {
-        // Add the captured image to draft
-        _uiState.update {
-            it.copy(
-                currentPage = 1
+        viewModelScope.launch {
+            _uiState.update {
+                it.copy(isLoading = true)
+            }
+            val result = issueListRepository.insertIssue(
+                Issue(
+                    id = issueId,
+                    title = "",
+                    notes = "",
+                    location = "",
+                    syncStatus = IssueSyncStatus.PENDING,
+                    priority = IssuePriority.MEDIUM,
+                    status = IssueStatus.OPEN,
+                    photoPath = _uiState.value.capturedImage ?: return@launch,
+                    createdAt = System.currentTimeMillis(),
+                    updatedAt = System.currentTimeMillis(),
+                    isDraft = true
+                )
             )
+            if (result is Result.Success) {
+                _uiState.update {
+                    it.copy(
+                        isLoading = false,
+                        currentPage = 1
+                    )
+                }
+            } else {
+                _uiState.update {
+                    it.copy(
+                        isLoading = false
+                    )
+                }
+            }
         }
     }
 
