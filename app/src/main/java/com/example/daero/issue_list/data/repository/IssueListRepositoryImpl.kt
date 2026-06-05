@@ -4,6 +4,7 @@ import com.example.daero.issue_list.data.local.dao.IssueDao
 import com.example.daero.issue_list.data.local.entity.IssueEntity
 import com.example.daero.issue_list.data.local.entity.toDomain
 import com.example.daero.issue_list.data.local.entity.toEntity
+import com.example.daero.issue_list.data.remote.FakeRemoteService
 import com.example.daero.issue_list.domain.model.Issue
 import com.example.daero.issue_list.domain.model.IssueSyncStatus
 import com.example.daero.issue_list.domain.model.Result
@@ -14,6 +15,7 @@ import kotlinx.coroutines.flow.map
 
 class IssueListRepositoryImpl(
     private val issueDao: IssueDao,
+    private val remoteService: FakeRemoteService,
 ): IssueListRepository {
 
     override fun loadAllIssues(): Flow<Result<List<Issue>>> {
@@ -66,6 +68,20 @@ class IssueListRepositoryImpl(
             Result.Success(Unit)
         } catch (e: Exception) {
             Result.Error(e, "Failed to update issue photo path")
+        }
+    }
+
+    override suspend fun syncIssues(issues: List<Issue>): Result<Unit> {
+        return try {
+            issues.forEach {
+                if (it.syncStatus != IssueSyncStatus.PENDING) {
+                    issueDao.updateIssueSyncStatus(it.id, IssueSyncStatus.PENDING)
+                }
+                issueDao.updateIssue(remoteService.createIssue(it).toEntity())
+            }
+            Result.Success(Unit)
+        } catch (e: Exception) {
+            Result.Error(e, "Failed to sync issues")
         }
     }
 }
