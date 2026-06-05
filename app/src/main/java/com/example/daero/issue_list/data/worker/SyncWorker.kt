@@ -9,6 +9,7 @@ import androidx.core.app.NotificationCompat
 import androidx.work.CoroutineWorker
 import androidx.work.ForegroundInfo
 import androidx.work.WorkerParameters
+import com.example.daero.R
 import com.example.daero.issue_list.domain.repository.IssueListRepository
 import com.example.daero.issue_list.domain.model.Result as DomainResult
 import org.koin.core.component.KoinComponent
@@ -55,6 +56,7 @@ class SyncWorker(
         val notification = NotificationCompat.Builder(context, CHANNEL_ID)
             .setContentTitle("Syncing field notes")
             .setContentText("Uploading pending changes...")
+            .setSmallIcon(R.drawable.cloud_sync_24px)
             .setOngoing(true)
             .build()
 
