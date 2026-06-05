@@ -14,6 +14,7 @@ data class IssueUi(
     val syncStatus: String,
     val createdAt: String,
     val updatedAt: String,
+    val isDraft: Boolean = false
 )
 
 fun Issue.toUi(): IssueUi {
@@ -28,5 +29,6 @@ fun Issue.toUi(): IssueUi {
         syncStatus = syncStatus.toReadableString(),
         createdAt = createdAt.toReadableDateTime(),
         updatedAt = updatedAt.toReadableDateTime(),
+        isDraft = isDraft
     )
 }
