@@ -14,5 +14,5 @@ interface IssueListRepository {
 
     suspend fun updateIssuePhotoPath(id: String, photoPath: String): Result<Unit>
 
-    suspend fun syncIssues(issues: List<Issue>): Result<Unit>
+    suspend fun syncIssues(ids: List<String>): Result<Unit>
 }

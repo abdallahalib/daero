@@ -11,6 +11,7 @@ import com.example.daero.issue_list.domain.model.Result
 import com.example.daero.issue_list.domain.repository.IssueListRepository
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.catch
+import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.map
 
 class IssueListRepositoryImpl(
@@ -71,13 +72,14 @@ class IssueListRepositoryImpl(
         }
     }
 
-    override suspend fun syncIssues(issues: List<Issue>): Result<Unit> {
+    override suspend fun syncIssues(ids: List<String>): Result<Unit> {
         return try {
-            issues.forEach {
-                if (it.syncStatus != IssueSyncStatus.PENDING) {
-                    issueDao.updateIssueSyncStatus(it.id, IssueSyncStatus.PENDING)
+            ids.forEach { id ->
+                val issue = issueDao.loadIssueById(id).first() ?: return@forEach
+                if (issue.syncStatus != IssueSyncStatus.PENDING) {
+                    issueDao.updateIssueSyncStatus(id, IssueSyncStatus.PENDING)
                 }
-                issueDao.updateIssue(remoteService.createIssue(it).toEntity())
+                issueDao.updateIssue(remoteService.createIssue(issue.toDomain()).toEntity())
             }
             Result.Success(Unit)
         } catch (e: Exception) {
