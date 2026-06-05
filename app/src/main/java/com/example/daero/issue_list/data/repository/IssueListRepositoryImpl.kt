@@ -1,10 +1,17 @@
 package com.example.daero.issue_list.data.repository
 
 import android.util.Log
+import androidx.work.Constraints
+import androidx.work.ExistingWorkPolicy
+import androidx.work.NetworkType
+import androidx.work.OneTimeWorkRequestBuilder
+import androidx.work.OutOfQuotaPolicy
+import androidx.work.WorkManager
 import com.example.daero.issue_list.data.local.dao.IssueDao
 import com.example.daero.issue_list.data.local.entity.IssueEntity
 import com.example.daero.issue_list.data.local.entity.toDomain
 import com.example.daero.issue_list.data.local.entity.toEntity
+import com.example.daero.issue_list.data.worker.SyncWorker
 import com.example.daero.issue_list.domain.model.Issue
 import com.example.daero.issue_list.domain.model.IssueSyncStatus
 import com.example.daero.issue_list.domain.model.Result
@@ -18,6 +25,7 @@ import kotlinx.coroutines.flow.map
 private const val TAG = "IssueListRepositoryImpl"
 
 class IssueListRepositoryImpl(
+    private val workManager: WorkManager,
     private val issueDao: IssueDao,
     private val remoteService: RemoteService,
 ) : IssueListRepository {
@@ -88,7 +96,22 @@ class IssueListRepositoryImpl(
     }
 
     override suspend fun syncAllIssues(): Result<Unit> {
-        TODO("Not yet implemented")
+        val request = OneTimeWorkRequestBuilder<SyncWorker>()
+            .setExpedited(OutOfQuotaPolicy.RUN_AS_NON_EXPEDITED_WORK_REQUEST)
+            .setConstraints(
+                Constraints.Builder()
+                    .setRequiredNetworkType(NetworkType.CONNECTED)
+                    .build()
+            )
+            .build()
+
+        workManager
+            .enqueueUniqueWork(
+                SyncWorker.WORK_NAME,
+                ExistingWorkPolicy.REPLACE,
+                request
+            )
+        return Result.Success(Unit)
     }
 
     override suspend fun syncIssue(id: String): Result<Unit> {
