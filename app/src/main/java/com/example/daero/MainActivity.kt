@@ -52,6 +52,10 @@ class MainActivity : ComponentActivity() {
                         is IssueListEffect.NavigateToIssueDetailScreen -> {
                             navController.navigate(IssueDetailRoute(it.issueId))
                         }
+
+                        is IssueListEffect.NavigateToEditIssueScreen -> {
+                            navController.navigate(EditIssueRoute(it.issueId))
+                        }
                     }
 
                 }
