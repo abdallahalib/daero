@@ -15,11 +15,9 @@ import com.example.daero.issue_list.domain.model.Result
 import com.example.daero.issue_list.domain.repository.IssueListRepository
 import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.flow.MutableStateFlow
-import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
-import kotlinx.coroutines.flow.map
+import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.receiveAsFlow
-import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import java.util.concurrent.ExecutorService
@@ -70,33 +68,7 @@ class EditIssueViewModel(
     private val issueListRepository: IssueListRepository,
 ) : ViewModel() {
     private val _uiState = MutableStateFlow(EditIssueUiState())
-    val uiState: StateFlow<EditIssueUiState> = issueListRepository.loadIssueById(issueId)
-        .map { result ->
-            when (result) {
-                is Result.Success -> EditIssueUiState(
-                    isLoading = false,
-                    capturedImage = result.data.photoPath,
-                    title = result.data.title,
-                    notes = result.data.notes,
-                    location = result.data.location,
-                    priority = result.data.priority,
-                    status = result.data.status,
-                    createdAt = result.data.createdAt,
-                )
-
-                is Result.Error -> EditIssueUiState(
-                    isLoading = false,
-                    errorMessage = result.message,
-                )
-
-                Result.Loading -> EditIssueUiState(isLoading = true)
-            }
-        }
-        .stateIn(
-            scope = viewModelScope,
-            started = SharingStarted.WhileSubscribed(5000),
-            initialValue = EditIssueUiState(),
-        )
+    val uiState: StateFlow<EditIssueUiState> = _uiState
 
     private val _effect = Channel<EditIssueEffect>(Channel.BUFFERED)
     val effect = _effect.receiveAsFlow()
@@ -113,6 +85,40 @@ class EditIssueViewModel(
     val imageCapture: ImageCapture = ImageCapture.Builder()
         .setCaptureMode(ImageCapture.CAPTURE_MODE_MINIMIZE_LATENCY)
         .build()
+
+    init {
+        viewModelScope.launch {
+            val result = issueListRepository
+                .loadIssueById(issueId)
+                .first { it !is Result.Loading }
+
+            when (result) {
+                is Result.Success -> {
+                    val issue = result.data
+                    _uiState.update {
+                        it.copy(
+                            capturedImage = issue.photoPath,
+                            title = issue.title,
+                            notes = issue.notes,
+                            location = issue.location,
+                            priority = issue.priority,
+                            status = issue.status,
+                            createdAt = issue.createdAt,
+                            errorMessage = null,
+                        )
+                    }
+                }
+
+                else -> {
+                    _uiState.update {
+                        it.copy(
+                            errorMessage = "Failed to load issue"
+                        )
+                    }
+                }
+            }
+        }
+    }
 
     fun handleIntent(intent: EditIssueIntent) {
         when (intent) {

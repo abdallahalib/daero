@@ -6,6 +6,7 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.pager.HorizontalPager
 import androidx.compose.foundation.pager.rememberPagerState
 import androidx.compose.foundation.text.input.rememberTextFieldState
+import androidx.compose.foundation.text.input.setTextAndPlaceCursorAtEnd
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
@@ -43,11 +44,26 @@ fun EditIssueScreen(
 ) {
     val editIssueUiState = editIssueViewModel.uiState.collectAsStateWithLifecycle().value
     val pagerState = rememberPagerState(initialPage = 0, pageCount = { 2 })
-    val titleState = rememberTextFieldState(editIssueUiState.title)
-    val notesState = rememberTextFieldState(editIssueUiState.notes)
-    val locationState = rememberTextFieldState(editIssueUiState.location)
+    val titleState = rememberTextFieldState("")
+    val notesState = rememberTextFieldState("")
+    val locationState = rememberTextFieldState("")
     var selectedPriority by remember { mutableStateOf(editIssueUiState.priority) }
     var selectedStatus by remember { mutableStateOf(editIssueUiState.status) }
+    LaunchedEffect(editIssueUiState.title) {
+        titleState.setTextAndPlaceCursorAtEnd(editIssueUiState.title)
+    }
+    LaunchedEffect(editIssueUiState.notes) {
+        notesState.setTextAndPlaceCursorAtEnd(editIssueUiState.notes)
+    }
+    LaunchedEffect(editIssueUiState.location) {
+        locationState.setTextAndPlaceCursorAtEnd(editIssueUiState.location)
+    }
+    LaunchedEffect(editIssueUiState.priority) {
+        selectedPriority = editIssueUiState.priority
+    }
+    LaunchedEffect(editIssueUiState.status) {
+        selectedStatus = editIssueUiState.status
+    }
     LaunchedEffect(editIssueUiState.currentPage) {
         if (editIssueUiState.currentPage != pagerState.currentPage) {
             pagerState.animateScrollToPage(editIssueUiState.currentPage)
