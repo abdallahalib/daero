@@ -1,5 +1,6 @@
 package com.example.daero.issue_list.data.repository
 
+import android.util.Log
 import com.example.daero.issue_list.data.local.dao.IssueDao
 import com.example.daero.issue_list.data.local.entity.IssueEntity
 import com.example.daero.issue_list.data.local.entity.toDomain
@@ -14,6 +15,7 @@ import kotlinx.coroutines.flow.catch
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.map
 
+private const val TAG = "IssueListRepositoryImpl"
 class IssueListRepositoryImpl(
     private val issueDao: IssueDao,
     private val remoteService: RemoteService,
@@ -73,12 +75,17 @@ class IssueListRepositoryImpl(
     }
 
     override suspend fun syncIssues(ids: List<String>): Result<Unit> {
+        Log.d(TAG, "Syncing issues")
         return try {
             ids.forEach { id ->
                 val issue = issueDao.loadIssueById(id).first() ?: return@forEach
-                if (issue.syncStatus != IssueSyncStatus.PENDING) {
+                if (issue.syncStatus == IssueSyncStatus.SYNCED) {
+                    Log.d(TAG, "Issue with id $id is already synced")
+                    return@forEach
+                } else if (issue.syncStatus != IssueSyncStatus.PENDING) {
                     issueDao.updateIssueSyncStatus(id, IssueSyncStatus.PENDING)
                 }
+                Log.d(TAG, "Syncing issue with id $id")
                 issueDao.updateIssue(remoteService.createIssue(issue.toDomain()).toEntity())
             }
             Result.Success(Unit)
