@@ -9,6 +9,7 @@ import androidx.room.Upsert
 import com.example.daero.issue_list.data.local.entity.IssueEntity
 import com.example.daero.issue_list.domain.model.IssueSyncStatus
 import kotlinx.coroutines.flow.Flow
+import org.w3c.dom.ls.LSInput
 
 @Dao
 interface IssueDao {
@@ -36,4 +37,7 @@ interface IssueDao {
 
     @Query("UPDATE issues SET photo_path = :photoPath, sync_status = :syncStatus WHERE id = :id")
     suspend fun updateIssuePhotoPathAndSyncStatus(id: String, photoPath: String, syncStatus: IssueSyncStatus)
+
+    @Query("SELECT id FROM issues WHERE sync_status = 'PENDING'")
+    suspend fun getAllPendingIssuesIds(): List<String>
 }
