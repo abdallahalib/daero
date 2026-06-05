@@ -36,7 +36,7 @@ fun IssueListScreen(
                 },
                 actions = {
                     IconButton(
-                        onClick = { TODO("Not implemented") }
+                        onClick = { onIntent(IssueListIntent.OnSyncClicked) }
                     ) {
                         Icon(
                             imageVector = ImageVector.vectorResource(R.drawable.cloud_sync_24px),
