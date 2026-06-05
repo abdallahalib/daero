@@ -21,12 +21,14 @@ data class IssueListUiState(
 
 sealed class IssueListIntent {
     data object OnAddIssueClicked : IssueListIntent()
-    data class OnIssueClicked(val issueId: String) : IssueListIntent()
+    data class OnIssueClicked(val issueId: String, val isDraft: Boolean) : IssueListIntent()
 }
 
 sealed class IssueListEffect {
     data object NavigateToNewIssueScreen : IssueListEffect()
     data class NavigateToIssueDetailScreen(val issueId: String) : IssueListEffect()
+
+    data class NavigateToEditIssueScreen(val issueId: String) : IssueListEffect()
 }
 class IssueListViewModel(
     private val repository: IssueListRepository
@@ -66,7 +68,11 @@ class IssueListViewModel(
             }
 
             is IssueListIntent.OnIssueClicked -> {
-                _effect.trySend(IssueListEffect.NavigateToIssueDetailScreen(intent.issueId))
+                if (intent.isDraft) {
+                    _effect.trySend(IssueListEffect.NavigateToEditIssueScreen(intent.issueId))
+                } else {
+                    _effect.trySend(IssueListEffect.NavigateToIssueDetailScreen(intent.issueId))
+                }
             }
         }
     }

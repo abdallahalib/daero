@@ -63,7 +63,7 @@ fun IssueListScreen(
             modifier = Modifier.padding(paddingValues),
             issues = issueListUiState.issues,
             onItemClick = { issueUi ->
-                onIntent(IssueListIntent.OnIssueClicked(issueUi.id))
+                onIntent(IssueListIntent.OnIssueClicked(issueUi.id, issueUi.isDraft))
             }
         )
         if (issueListUiState.isLoading) {
