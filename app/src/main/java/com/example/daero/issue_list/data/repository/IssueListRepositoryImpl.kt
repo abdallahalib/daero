@@ -78,6 +78,15 @@ class IssueListRepositoryImpl(
         }
     }
 
+    override suspend fun getAllPendingIssuesId(): Result<List<String>> {
+        return try {
+            val pendingIds = issueDao.getAllPendingIssuesIds()
+            Result.Success(pendingIds)
+        } catch (e: Exception) {
+            Result.Error(e, "Failed to get pending issues ids")
+        }
+    }
+
     override suspend fun syncAllIssues(): Result<Unit> {
         TODO("Not yet implemented")
     }
