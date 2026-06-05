@@ -59,13 +59,6 @@ fun IssueListScreen(
             }
         }
     ) { paddingValues ->
-        IssueList(
-            modifier = Modifier.padding(paddingValues),
-            issues = issueListUiState.issues,
-            onItemClick = { issueUi ->
-                onIntent(IssueListIntent.OnIssueClicked(issueUi.id, issueUi.isDraft))
-            }
-        )
         if (issueListUiState.isLoading) {
             Box(
                 modifier = Modifier
@@ -74,6 +67,25 @@ fun IssueListScreen(
                 contentAlignment = Alignment.Center
             ) {
                 CircularProgressIndicator()
+            }
+        } else {
+            if (issueListUiState.issues.isEmpty()) {
+                Box(
+                    modifier = Modifier
+                        .padding(paddingValues)
+                        .fillMaxSize(),
+                    contentAlignment = Alignment.Center
+                ) {
+                    Text(text = "No issues found.")
+                }
+            } else {
+                IssueList(
+                    modifier = Modifier.padding(paddingValues),
+                    issues = issueListUiState.issues,
+                    onItemClick = { issueUi ->
+                        onIntent(IssueListIntent.OnIssueClicked(issueUi.id, issueUi.isDraft))
+                    }
+                )
             }
         }
     }
