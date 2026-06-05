@@ -4,10 +4,10 @@ import com.example.daero.issue_list.data.local.dao.IssueDao
 import com.example.daero.issue_list.data.local.entity.IssueEntity
 import com.example.daero.issue_list.data.local.entity.toDomain
 import com.example.daero.issue_list.data.local.entity.toEntity
-import com.example.daero.issue_list.data.remote.FakeRemoteService
 import com.example.daero.issue_list.domain.model.Issue
 import com.example.daero.issue_list.domain.model.IssueSyncStatus
 import com.example.daero.issue_list.domain.model.Result
+import com.example.daero.issue_list.domain.remote.RemoteService
 import com.example.daero.issue_list.domain.repository.IssueListRepository
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.catch
@@ -16,7 +16,7 @@ import kotlinx.coroutines.flow.map
 
 class IssueListRepositoryImpl(
     private val issueDao: IssueDao,
-    private val remoteService: FakeRemoteService,
+    private val remoteService: RemoteService,
 ): IssueListRepository {
 
     override fun loadAllIssues(): Flow<Result<List<Issue>>> {
