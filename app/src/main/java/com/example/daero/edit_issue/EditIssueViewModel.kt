@@ -39,6 +39,7 @@ data class EditIssueUiState(
     val status: IssueStatus = IssueStatus.OPEN,
     val createdAt: Long? = null,
     val errorMessage: String? = null,
+    val remoteId: String? = null
 )
 
 sealed class EditIssueIntent {
@@ -105,6 +106,7 @@ class EditIssueViewModel(
                             status = issue.status,
                             createdAt = issue.createdAt,
                             errorMessage = null,
+                            remoteId = issue.remoteId
                         )
                     }
                 }
@@ -195,6 +197,7 @@ class EditIssueViewModel(
                 photoPath = _uiState.value.capturedImage ?: return@launch,
                 createdAt = _uiState.value.createdAt ?: return@launch,
                 updatedAt = System.currentTimeMillis(),
+                remoteId = _uiState.value.remoteId
             )
             val result = issueListRepository.updateIssue(issue)
             when (result) {
