@@ -51,3 +51,10 @@ The app is structured into three layers:
 1- Fix the sync notification not showing on the first sync attempt.
 2- Add retry behavior for failed sync attempts.
 3- Add background sync that triggers automatically when connectivity is restored.
+
+## Branches
+There is 3 branches.
+1- main (db_v3).
+2- db_v1, shows the app state before implementing draft, and syncing.
+2- db_v2, shows the app state after implementing draft and syncing but without storing the remote id.
+You can run db_v1, then db_v2, then main to test room mitigation.
