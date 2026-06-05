@@ -35,7 +35,7 @@ class IssueListRepositoryImpl(
 
     override suspend fun insertIssue(issue: Issue): Result<Unit> {
         return try {
-            issueDao.insertIssue(issue.toEntity())
+            issueDao.upsertIssue(issue.toEntity())
             Result.Success(Unit)
         } catch (e: Exception) {
             Result.Error(e, "Failed to insert issue")

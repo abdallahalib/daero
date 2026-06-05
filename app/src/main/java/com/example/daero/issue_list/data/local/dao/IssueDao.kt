@@ -5,6 +5,7 @@ import androidx.room.Insert
 import androidx.room.OnConflictStrategy
 import androidx.room.Query
 import androidx.room.Update
+import androidx.room.Upsert
 import com.example.daero.issue_list.data.local.entity.IssueEntity
 import com.example.daero.issue_list.domain.model.IssueSyncStatus
 import kotlinx.coroutines.flow.Flow
@@ -23,6 +24,9 @@ interface IssueDao {
 
     @Update
     suspend fun updateIssue(issue: IssueEntity)
+
+    @Upsert
+    suspend fun upsertIssue(issue: IssueEntity)
 
     @Query("UPDATE issues SET sync_status = :syncStatus WHERE id = :id")
     suspend fun updateIssueSyncStatus(id: String, syncStatus: IssueSyncStatus)
