@@ -70,6 +70,7 @@ dependencies {
     implementation(platform(libs.koin.bom))
     implementation(libs.koin.android)
     implementation(libs.koin.androidx.compose)
+    implementation(libs.koin.androidx.workmanager)
     testImplementation(libs.koin.test)
     implementation(libs.coil.compose)
     implementation(libs.kotlinx.serialization.json)
