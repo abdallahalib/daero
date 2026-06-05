@@ -90,7 +90,7 @@ class IssueListViewModel(
 
     private fun syncIssues() {
         viewModelScope.launch {
-            val result = repository.syncIssues(uiState.value.issues.map { it.id })
+            val result = repository.syncAllIssues()
             if (result is Result.Success) {
                 Log.d(TAG, "Issues synced successfully")
             } else {
