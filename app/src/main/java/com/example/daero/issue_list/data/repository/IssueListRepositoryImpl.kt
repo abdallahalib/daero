@@ -125,7 +125,11 @@ class IssueListRepositoryImpl(
                 issueDao.updateIssueSyncStatus(id, IssueSyncStatus.PENDING)
             }
             Log.d(TAG, "Syncing issue with id $id")
-            issueDao.updateIssue(remoteService.createIssue(issue.toDomain()).toEntity())
+            if (issue.remoteId == null) {
+                issueDao.updateIssue(remoteService.createIssue(issue.toDomain()).toEntity())
+            } else {
+                issueDao.updateIssue(remoteService.updateIssue(issue.toDomain()).toEntity())
+            }
             return Result.Success(Unit)
         } catch (e: Exception) {
             return Result.Error(e, "Failed to sync issues")
