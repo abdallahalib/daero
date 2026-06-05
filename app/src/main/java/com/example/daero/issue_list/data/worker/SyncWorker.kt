@@ -39,10 +39,7 @@ class SyncWorker(
             }
 
             pendingIds.forEach {
-                val result = repository.syncIssue(it)
-                if (result !is DomainResult.Success) {
-                    return Result.failure()
-                }
+                repository.syncIssue(it)
             }
             return Result.success()
         } catch (e: Exception) {
