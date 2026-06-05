@@ -67,7 +67,7 @@ class IssueListRepositoryImpl(
 
     override suspend fun updateIssuePhotoPath(id: String, photoPath: String): Result<Unit> {
         return try {
-            issueDao.updateIssuePhotoPath(id, photoPath)
+            issueDao.updateIssuePhotoPathAndSyncStatus(id, photoPath, IssueSyncStatus.PENDING)
             Result.Success(Unit)
         } catch (e: Exception) {
             Result.Error(e, "Failed to update issue photo path")
