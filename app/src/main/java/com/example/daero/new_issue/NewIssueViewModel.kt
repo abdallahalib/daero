@@ -99,7 +99,8 @@ class NewIssueViewModel(
             }
 
             is NewIssueIntent.OnRetakeClicked -> {
-                deleteCapturedImage()
+//                deleteCapturedImage()
+                // TODO A worker should be created for deleting the old unsaved images
                 _uiState.update {
                     it.copy(
                         capturedImage = null
