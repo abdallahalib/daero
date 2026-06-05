@@ -1,9 +1,11 @@
 package com.example.daero.issue_list.presentation
 
+import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.daero.issue_list.domain.model.Result
 import com.example.daero.issue_list.domain.repository.IssueListRepository
+import com.example.daero.issue_list.presentation.IssueListEffect.*
 import com.example.daero.issue_list.presentation.model.IssueUi
 import com.example.daero.issue_list.presentation.model.toUi
 import kotlinx.coroutines.channels.Channel
@@ -12,6 +14,7 @@ import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.receiveAsFlow
 import kotlinx.coroutines.flow.stateIn
+import kotlinx.coroutines.launch
 
 
 data class IssueListUiState(
@@ -22,6 +25,8 @@ data class IssueListUiState(
 sealed class IssueListIntent {
     data object OnAddIssueClicked : IssueListIntent()
     data class OnIssueClicked(val issueId: String, val isDraft: Boolean) : IssueListIntent()
+
+    data object OnSyncClicked : IssueListIntent()
 }
 
 sealed class IssueListEffect {
@@ -30,6 +35,8 @@ sealed class IssueListEffect {
 
     data class NavigateToEditIssueScreen(val issueId: String) : IssueListEffect()
 }
+
+private const val TAG = "IssueListViewModel"
 class IssueListViewModel(
     private val repository: IssueListRepository
 ): ViewModel() {
@@ -69,10 +76,25 @@ class IssueListViewModel(
 
             is IssueListIntent.OnIssueClicked -> {
                 if (intent.isDraft) {
-                    _effect.trySend(IssueListEffect.NavigateToEditIssueScreen(intent.issueId))
+                    _effect.trySend(NavigateToEditIssueScreen(intent.issueId))
                 } else {
-                    _effect.trySend(IssueListEffect.NavigateToIssueDetailScreen(intent.issueId))
+                    _effect.trySend(NavigateToIssueDetailScreen(intent.issueId))
                 }
+            }
+
+            IssueListIntent.OnSyncClicked -> {
+                syncIssues()
+            }
+        }
+    }
+
+    private fun syncIssues() {
+        viewModelScope.launch {
+            val result = repository.syncIssues(_uiState.value.issues.map { it.id })
+            if (result is Result.Success) {
+                Log.d(TAG, "Issues synced successfully")
+            } else {
+                Log.e(TAG, "Failed to sync issues: ${(result as? Result.Error)?.message}")
             }
         }
     }
