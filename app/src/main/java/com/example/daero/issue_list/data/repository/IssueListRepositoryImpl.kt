@@ -16,10 +16,11 @@ import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.map
 
 private const val TAG = "IssueListRepositoryImpl"
+
 class IssueListRepositoryImpl(
     private val issueDao: IssueDao,
     private val remoteService: RemoteService,
-): IssueListRepository {
+) : IssueListRepository {
 
     override fun loadAllIssues(): Flow<Result<List<Issue>>> {
         return issueDao.loadAllIssues().map<List<IssueEntity>, Result<List<Issue>>> { issueList ->
@@ -56,7 +57,10 @@ class IssueListRepositoryImpl(
         }
     }
 
-    override suspend fun updateIssueSyncStatus(id: String, syncStatus: IssueSyncStatus): Result<Unit> {
+    override suspend fun updateIssueSyncStatus(
+        id: String,
+        syncStatus: IssueSyncStatus
+    ): Result<Unit> {
         return try {
             issueDao.updateIssueSyncStatus(id, syncStatus)
             Result.Success(Unit)
@@ -74,23 +78,25 @@ class IssueListRepositoryImpl(
         }
     }
 
-    override suspend fun syncIssues(ids: List<String>): Result<Unit> {
-        Log.d(TAG, "Syncing issues")
-        return try {
-            ids.forEach { id ->
-                val issue = issueDao.loadIssueById(id).first() ?: return@forEach
-                if (issue.syncStatus == IssueSyncStatus.SYNCED) {
-                    Log.d(TAG, "Issue with id $id is already synced")
-                    return@forEach
-                } else if (issue.syncStatus != IssueSyncStatus.PENDING) {
-                    issueDao.updateIssueSyncStatus(id, IssueSyncStatus.PENDING)
-                }
-                Log.d(TAG, "Syncing issue with id $id")
-                issueDao.updateIssue(remoteService.createIssue(issue.toDomain()).toEntity())
+    override suspend fun syncAllIssues(): Result<Unit> {
+        TODO("Not yet implemented")
+    }
+
+    override suspend fun syncIssue(id: String): Result<Unit> {
+        try {
+            val issue = issueDao.loadIssueById(id).first()
+                ?: return Result.Error(Exception("Issue not found"), "Issue not found")
+            if (issue.syncStatus == IssueSyncStatus.SYNCED) {
+                Log.d(TAG, "Issue with id $id is already synced")
+                return Result.Success(Unit)
+            } else if (issue.syncStatus != IssueSyncStatus.PENDING) {
+                issueDao.updateIssueSyncStatus(id, IssueSyncStatus.PENDING)
             }
-            Result.Success(Unit)
+            Log.d(TAG, "Syncing issue with id $id")
+            issueDao.updateIssue(remoteService.createIssue(issue.toDomain()).toEntity())
+            return Result.Success(Unit)
         } catch (e: Exception) {
-            Result.Error(e, "Failed to sync issues")
+            return Result.Error(e, "Failed to sync issues")
         }
     }
 }
