@@ -13,7 +13,8 @@ val databaseModule = module {
             androidContext(),
             AppDatabase::class.java,
             "issue_database"
-        ).build()
+        ).addMigrations(AppDatabase.MIGRATION_1_2)
+            .build()
     }
 
     single { get<AppDatabase>().issueDao() }

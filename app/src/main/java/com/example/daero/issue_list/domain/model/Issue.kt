@@ -9,6 +9,7 @@ data class Issue(
     val priority: IssuePriority,
     val status: IssueStatus,
     val syncStatus: IssueSyncStatus,
+    val isDraft: Boolean = false,
     val createdAt: Long,
     val updatedAt: Long
 )
