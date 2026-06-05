@@ -8,6 +8,7 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
@@ -38,14 +39,23 @@ fun IssueItem(
             contentDescription = issueUi.title,
             modifier = Modifier.size(64.dp).clip(RoundedCornerShape(8.dp))
         )
-        Column(
-            modifier = Modifier.weight(1f)
-        ) {
-            Text(text = "${issueUi.title} (${issueUi.status})")
-            Text(text = "Priority: ${issueUi.priority}")
-            Text(text = issueUi.createdAt)
+        if (issueUi.isDraft) {
+            Column(
+                modifier = Modifier.weight(1f)
+            ) {
+                Text(text = "Draft", color = MaterialTheme.colorScheme.error)
+                Text(text = issueUi.createdAt)
+            }
+        } else {
+            Column(
+                modifier = Modifier.weight(1f)
+            ) {
+                Text(text = "${issueUi.title} (${issueUi.status})")
+                Text(text = "Priority: ${issueUi.priority}")
+                Text(text = issueUi.createdAt)
+            }
+            Text(text = issueUi.syncStatus)
         }
-        Text(text = issueUi.syncStatus)
     }
 }
 
@@ -63,6 +73,7 @@ fun IssueItemPreview() {
         syncStatus = "Synced",
         createdAt = "2024-06-01 12:00",
         updatedAt = "2024-06-01 12:00",
+        isDraft = true
     )
     IssueItem(issueUi = issueUi, onCLick = {})
 }
